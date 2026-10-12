@@ -10,15 +10,29 @@ from typing import Dict, Any, List
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "backend")))
 
-from app.core.database import DatabaseManager
-from app.core.seeder import seed_all_data
-from app.services.ingestion import ingestion_service
-from app.workflows.detection_workflow import run_detection_pipeline
-from app.services.grouping import grouping_service
-from app.services.rca import rca_service
-from app.services.policy import policy_service
-from app.repositories.incident_repo import incident_repo
-from eval.generator import generate_scenario_dataset
+try:
+    from app.core.database import DatabaseManager
+    from app.core.seeder import seed_all_data
+    from app.services.ingestion import ingestion_service
+    from app.workflows.detection_workflow import run_detection_pipeline
+    from app.services.grouping import grouping_service
+    from app.services.rca import rca_service
+    from app.services.policy import policy_service
+    from app.repositories.incident_repo import incident_repo
+except ImportError:
+    from backend.app.core.database import DatabaseManager  # type: ignore
+    from backend.app.core.seeder import seed_all_data  # type: ignore
+    from backend.app.services.ingestion import ingestion_service  # type: ignore
+    from backend.app.workflows.detection_workflow import run_detection_pipeline  # type: ignore
+    from backend.app.services.grouping import grouping_service  # type: ignore
+    from backend.app.services.rca import rca_service  # type: ignore
+    from backend.app.services.policy import policy_service  # type: ignore
+    from backend.app.repositories.incident_repo import incident_repo  # type: ignore
+
+try:
+    from eval.generator import generate_scenario_dataset
+except ImportError:
+    from generator import generate_scenario_dataset  # type: ignore
 
 async def ensure_eval_detection_rules():
     col = DatabaseManager.get_collection("detectionRules")

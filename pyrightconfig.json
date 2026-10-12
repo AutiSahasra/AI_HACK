@@ -1,0 +1,10 @@
+{
+  "extraPaths": [
+    "backend",
+    "demo-app",
+    "collector",
+    "eval"
+  ],
+  "venvPath": ".",
+  "venv": ".venv"
+}

@@ -4,17 +4,19 @@ import { User } from './types';
 import { getStoredUser, clearToken } from './api/client';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
-import { Login } from './pages/Login';
-import { Dashboard } from './pages/Dashboard';
-import { UploadLogs } from './pages/UploadLogs';
-import { LogExplorer } from './pages/LogExplorer';
-import { Incidents } from './pages/Incidents';
-import { IncidentDetail } from './pages/IncidentDetail';
-import { Tickets } from './pages/Tickets';
-import { Approvals } from './pages/Approvals';
-import { AuditLog } from './pages/AuditLog';
-import { Knowledge } from './pages/Knowledge';
-import { AdminSettings } from './pages/AdminSettings';
+import {
+  Login,
+  Dashboard,
+  UploadLogs,
+  LogExplorer,
+  Incidents,
+  IncidentDetail,
+  Tickets,
+  Approvals,
+  AuditLog,
+  Knowledge,
+  AdminSettings
+} from './pages';
 
 export const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(getStoredUser());

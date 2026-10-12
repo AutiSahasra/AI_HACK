@@ -15,11 +15,11 @@ from app.repositories.incident_repo import incident_repo
 # Import demo-app
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "demo-app"))
-from main import app as demo_app, state as demo_state
+from main import app as demo_app, state as demo_state  # type: ignore
 
 # Import collector
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "collector"))
-from tailer import LogTailer
+from tailer import LogTailer  # type: ignore
 
 @pytest.fixture(autouse=True)
 async def setup_test_environment():
