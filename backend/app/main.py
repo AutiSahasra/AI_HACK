@@ -11,8 +11,15 @@ from app.api.health import router as health_router
 from app.api.auth import router as auth_router
 from app.api.uploads import router as uploads_router
 from app.api.logs import router as logs_router
+from app.api.incidents import router as incidents_router
+
+from app.services.ingestion import ingestion_service
+from app.workflows.detection_workflow import run_detection_pipeline
 
 setup_logging()
+
+# Register shared detection pipeline for upload and live events
+ingestion_service.register_detection_hook(run_detection_pipeline)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -44,6 +51,7 @@ app.include_router(health_router, prefix=settings.API_V1_STR)
 app.include_router(auth_router, prefix=settings.API_V1_STR)
 app.include_router(uploads_router, prefix=settings.API_V1_STR)
 app.include_router(logs_router, prefix=settings.API_V1_STR)
+app.include_router(incidents_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def root():

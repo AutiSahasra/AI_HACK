@@ -60,7 +60,7 @@ async def seed_detection_rules():
             "description": "Detects database connection timeouts and pool exhaustion",
             "ruleType": "pattern",
             "service": "order-service",
-            "pattern": r"(?i)(database|db|postgres|mysql|mongo).*timeout|connection pool exhausted",
+            "pattern": r"(?i)(database|db|postgres|mysql|mongo).*(timeout|timed[ -]?out)|connection pool exhausted",
             "severity": "CRITICAL",
             "threshold": 3,
             "windowMinutes": 5,

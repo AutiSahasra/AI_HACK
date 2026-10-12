@@ -14,13 +14,13 @@
 - [x] Phase 1 Tests & Smoke check: Parser unit tests, upload integration tests, auth tests, commit Phase 1
 
 ## Phase 2: Detection, Grouping, Deduplication, Incidents
-- [ ] Detection rules engine: Regex/pattern rules, severity threshold rules, rolling window z-score anomaly checks
-- [ ] Incident Grouping & Deduplication: fingerprint + service + time window correlation; event count incrementing
-- [ ] Incident lifecycle state machine (`new` -> `analyzing` -> `analyzed` -> `awaiting_approval` -> `remediating` -> `verifying` -> `resolved` | `escalated` | `failed_analysis`)
-- [ ] Reopen/repeat detection for recently resolved incidents
-- [ ] Incident API endpoints: `GET /api/incidents`, `GET /api/incidents/{id}`, related events timeline
-- [ ] Frontend: Incident List page with filters, Incident Detail view with event timeline and matched rules
-- [ ] Phase 2 Tests & Smoke check: detection rules tests, grouping & dedup tests, commit Phase 2
+- [x] Detection rules engine: Regex/pattern rules, severity threshold rules, rolling window z-score anomaly checks
+- [x] Incident Grouping & Deduplication: fingerprint + service + time window correlation; event count incrementing
+- [x] Incident lifecycle state machine (`new` -> `analyzing` -> `analyzed` -> `awaiting_approval` -> `remediating` -> `verifying` -> `resolved` | `escalated` | `failed_analysis`)
+- [x] Reopen/repeat detection for recently resolved incidents
+- [x] Incident API endpoints: `GET /api/incidents`, `GET /api/incidents/{id}`, related events timeline
+- [x] Frontend: Incident List page with filters, Incident Detail view with event timeline and matched rules
+- [x] Phase 2 Tests & Smoke check: detection rules tests, grouping & dedup tests, commit Phase 2
 
 ## Phase 3: Retrieval and AI Root-Cause Analysis
 - [ ] Provider-independent LLM service interface: `AnthropicProvider`, `OpenAICompatibleProvider`, `MockProvider`
