@@ -96,82 +96,85 @@ export const Approvals: React.FC = () => {
               No approval requests pending. Requests submitted from incident investigation will appear here.
             </div>
           ) : (
-            approvals.map(a => (
-              <div
-                key={a.id}
-                style={{
-                  background: 'var(--bg-secondary)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: '10px',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ fontWeight: 700, fontSize: '15px', color: '#fff' }}>
-                      {a.actionName}
-                    </span>
-                    {getStatusBadge(a.status)}
-                    <span style={{ fontSize: '12px', color: 'var(--accent-cyan)' }}>
-                      Incident: {a.incidentId.slice(0, 8)}...
-                    </span>
+            approvals.map(a => {
+              const approvalId = a.id || (a as any)._id || '';
+              return (
+                <div
+                  key={approvalId}
+                  style={{
+                    background: 'var(--bg-secondary)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '10px',
+                    padding: '16px 20px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontWeight: 700, fontSize: '15px', color: '#fff' }}>
+                        {a.actionName}
+                      </span>
+                      {getStatusBadge(a.status)}
+                      <span style={{ fontSize: '12px', color: 'var(--accent-cyan)' }}>
+                        Incident: {a.incidentId ? a.incidentId.slice(0, 8) : 'N/A'}...
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
+                      Requested by <strong>{a.requestedBy}</strong> ({a.requestedByRole}) at {new Date(a.createdAt).toLocaleTimeString()}
+                      {a.approvedBy && (
+                        <span style={{ marginLeft: '8px', color: '#34d399' }}>
+                          • Decided by {a.approvedBy} ({a.approvedByRole})
+                        </span>
+                      )}
+                      {a.rejectionReason && (
+                        <span style={{ marginLeft: '8px', color: '#fb7185' }}>
+                          • Reason: {a.rejectionReason}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
-                    Requested by <strong>{a.requestedBy}</strong> ({a.requestedByRole}) at {new Date(a.createdAt).toLocaleTimeString()}
-                    {a.approvedBy && (
-                      <span style={{ marginLeft: '8px', color: '#34d399' }}>
-                        • Decided by {a.approvedBy} ({a.approvedByRole})
-                      </span>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {a.status === 'pending' && (
+                      <>
+                        <button
+                          className="btn btn-success"
+                          style={{ padding: '6px 14px', fontSize: '13px' }}
+                          onClick={() => handleDecision(approvalId, 'approved')}
+                        >
+                          <CheckCircle2 size={15} /> Approve
+                        </button>
+                        <button
+                          className="btn btn-danger"
+                          style={{ padding: '6px 14px', fontSize: '13px' }}
+                          onClick={() => {
+                            const r = prompt('Enter rejection reason:');
+                            if (r) {
+                              setRejectReason(r);
+                              handleDecision(approvalId, 'rejected');
+                            }
+                          }}
+                        >
+                          <XCircle size={15} /> Reject
+                        </button>
+                      </>
                     )}
-                    {a.rejectionReason && (
-                      <span style={{ marginLeft: '8px', color: '#fb7185' }}>
-                        • Reason: {a.rejectionReason}
-                      </span>
+
+                    {a.status === 'approved' && (
+                      <button
+                        className="btn btn-primary"
+                        style={{ padding: '6px 14px', fontSize: '13px' }}
+                        onClick={() => handleExecute(approvalId)}
+                      >
+                        <Play size={15} /> Execute & Verify
+                      </button>
                     )}
                   </div>
                 </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {a.status === 'pending' && (
-                    <>
-                      <button
-                        className="btn btn-success"
-                        style={{ padding: '6px 14px', fontSize: '13px' }}
-                        onClick={() => handleDecision(a.id, 'approved')}
-                      >
-                        <CheckCircle2 size={15} /> Approve
-                      </button>
-                      <button
-                        className="btn btn-danger"
-                        style={{ padding: '6px 14px', fontSize: '13px' }}
-                        onClick={() => {
-                          const r = prompt('Enter rejection reason:');
-                          if (r) {
-                            setRejectReason(r);
-                            handleDecision(a.id, 'rejected');
-                          }
-                        }}
-                      >
-                        <XCircle size={15} /> Reject
-                      </button>
-                    </>
-                  )}
-
-                  {a.status === 'approved' && (
-                    <button
-                      className="btn btn-primary"
-                      style={{ padding: '6px 14px', fontSize: '13px' }}
-                      onClick={() => handleExecute(a.id)}
-                    >
-                      <Play size={15} /> Execute & Verify
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>

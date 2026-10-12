@@ -15,7 +15,7 @@ class FeedbackRequest(BaseModel):
     useful: bool
     notes: Optional[str] = None
 
-@router.get("", response_model=List[Incident])
+@router.get("", response_model=List[Incident], response_model_by_alias=False)
 async def list_incidents(
     status: Optional[IncidentStatus] = None,
     severity: Optional[LogSeverity] = None,
@@ -36,12 +36,12 @@ async def list_incidents(
     items, total = await incident_repo.list_incidents(params)
     res = []
     for item in items:
-        if "_id" in item and "id" not in item:
+        if "_id" in item:
             item["id"] = str(item["_id"])
         res.append(Incident(**item))
     return res
 
-@router.get("/{incident_id}", response_model=Incident)
+@router.get("/{incident_id}", response_model=Incident, response_model_by_alias=False)
 async def get_incident(
     incident_id: str,
     current_user: dict = Depends(get_current_user)

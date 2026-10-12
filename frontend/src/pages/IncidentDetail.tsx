@@ -70,6 +70,34 @@ export const IncidentDetail: React.FC = () => {
     }
   };
 
+  const [showActionModal, setShowActionModal] = useState(false);
+  const [selectedAction, setSelectedAction] = useState('restart_demo_service');
+  const [actionSubmitting, setActionSubmitting] = useState(false);
+  const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null);
+  const [actionErrorMsg, setActionErrorMsg] = useState<string | null>(null);
+
+  const incidentId = incident ? (incident.id || (incident as any)._id || id || '') : '';
+
+  const handleRequestActionSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!incidentId) {
+      setActionErrorMsg('Error: Incident ID missing.');
+      return;
+    }
+    setActionSubmitting(true);
+    setActionErrorMsg(null);
+    try {
+      const res = await api.requestAction(incidentId, selectedAction);
+      setActionSuccessMsg(`Remediation action '${selectedAction}' requested successfully! Status: ${res.status}. Sent to Senior Approver queue.`);
+      setShowActionModal(false);
+      await fetchIncidentData();
+    } catch (err: any) {
+      setActionErrorMsg(err.message || 'Failed to request remediation action');
+    } finally {
+      setActionSubmitting(false);
+    }
+  };
+
   if (loading || !incident) {
     return (
       <div className="glass-panel" style={{ padding: '48px', textAlign: 'center', color: 'var(--text-dim)' }}>
@@ -119,17 +147,13 @@ export const IncidentDetail: React.FC = () => {
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
               onClick={() => {
-                const action = prompt('Enter allow-listed remediation action (restart_demo_service, clear_demo_cache, rollback_demo_config):', 'restart_demo_service');
-                if (action) {
-                  api.requestAction(incident.id, action)
-                    .then(res => alert(`Remediation action '${action}' requested. Status: ${res.status}`))
-                    .catch(err => alert(err.message));
-                }
+                setActionErrorMsg(null);
+                setShowActionModal(true);
               }}
               className="btn btn-secondary"
             >
               <Wrench size={16} />
-              <span>Request Remediation</span>
+              <span>Request Remediation Action</span>
             </button>
             <button
               onClick={handleTriggerRca}
@@ -141,12 +165,112 @@ export const IncidentDetail: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {actionSuccessMsg && (
+          <div className="glass-panel" style={{ marginTop: '14px', padding: '12px 18px', background: 'rgba(52, 211, 153, 0.15)', border: '1px solid var(--accent-emerald)', color: '#34d399', fontSize: '13px' }}>
+            ✓ {actionSuccessMsg}
+          </div>
+        )}
+
+        {actionErrorMsg && (
+          <div className="glass-panel" style={{ marginTop: '14px', padding: '12px 18px', background: 'rgba(244, 63, 94, 0.15)', border: '1px solid var(--accent-rose)', color: '#fb7185', fontSize: '13px' }}>
+            ✗ {actionErrorMsg}
+          </div>
+        )}
+
         {incident.ticketId && (
           <div style={{ marginTop: '8px', fontSize: '13px', color: 'var(--text-dim)' }}>
             Linked Ticket: <Link to="/tickets" style={{ color: 'var(--accent-cyan)', fontWeight: 600, textDecoration: 'none' }}>{incident.ticketId}</Link>
           </div>
         )}
       </div>
+
+      {/* Remediation Request Modal */}
+      {showActionModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.75)',
+          backdropFilter: 'blur(6px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div className="glass-panel" style={{
+            maxWidth: '520px',
+            width: '100%',
+            padding: '24px',
+            border: '1px solid var(--border-accent)',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
+          }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 8px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Wrench size={20} color="var(--accent-cyan)" />
+              Request Allow-Listed Remediation
+            </h3>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '18px' }}>
+              Under enterprise policy, protected actions require authorization from a Senior Approver. Submitting routes this request to the Approver queue.
+            </p>
+
+            <form onSubmit={handleRequestActionSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-dim)', marginBottom: '6px' }}>
+                  Target Incident ID
+                </label>
+                <input
+                  type="text"
+                  className="input-field"
+                  value={incidentId}
+                  disabled
+                  style={{ opacity: 0.7, fontFamily: 'var(--font-mono)', fontSize: '12px' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-dim)', marginBottom: '6px' }}>
+                  Select Allow-Listed Action
+                </label>
+                <select
+                  className="input-field"
+                  value={selectedAction}
+                  onChange={(e) => setSelectedAction(e.target.value)}
+                  style={{ width: '100%', fontSize: '13px' }}
+                >
+                  <option value="restart_demo_service">restart_demo_service (Recovers DB pool exhaustion, 503, deadlock)</option>
+                  <option value="clear_demo_cache">clear_demo_cache (Recovers memory leak, OOM, rate limits, disk space)</option>
+                  <option value="rollback_demo_config">rollback_demo_config (Recovers bad configuration deployments)</option>
+                </select>
+              </div>
+
+              <div style={{ background: 'rgba(56, 189, 248, 0.08)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.2)', fontSize: '12px', color: 'var(--text-muted)' }}>
+                🔒 <strong>Dual-Authorization Guardrail:</strong> Zero shell execution. Requesters cannot approve their own actions. The action will be verified by a post-remediation health check before the incident can be resolved.
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '8px' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowActionModal(false)}
+                  disabled={actionSubmitting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={actionSubmitting}
+                >
+                  {actionSubmitting ? 'Submitting Request...' : 'Submit Request to Senior Approver'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Lifecycle Progress Bar */}
       <div className="glass-panel" style={{ padding: '16px 24px' }}>
