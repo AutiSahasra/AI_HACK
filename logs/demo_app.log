@@ -1,0 +1,2 @@
+{"timestamp": "2026-10-12T19:13:39.510917+00:00", "severity": "CRITICAL", "service": "order-service", "message": "ALERT: Fault injection triggered: db_connection_timeout", "host": "demo-host-01"}
+{"timestamp": "2026-10-12T19:13:39.515795+00:00", "severity": "INFO", "service": "order-service", "message": "Service gracefully restarted by admin remediation. Database connection pool recycled.", "host": "demo-host-01"}

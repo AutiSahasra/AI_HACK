@@ -33,12 +33,12 @@
 - [x] Phase 3 Tests & Smoke check: RCA schema validation tests, anti-hallucination tests, retrieval tests, commit Phase 3
 
 ## Phase 4: Live Ingestion with Demo App & Collector
-- [ ] Demo app: FastAPI service with normal traffic log emission, fault injection endpoints (`/faults/db_connection_timeout`, `/faults/memory_leak`, `/faults/bad_config_deploy`, `/faults/auth_failure_spike`, `/faults/downstream_503`), `/health` endpoint, and remediation endpoints (`/admin/restart`, `/admin/clear-cache`, `/admin/rollback-config`)
-- [ ] Collector: lightweight log tailer daemon with offset tracking, batch POSTs to `/api/ingest` with API key header and backoff
-- [ ] Log sources API & MongoDB collection: API key authentication and status tracking
-- [ ] `/api/ingest` shared pipeline verification (exact same parse -> normalize -> redact -> persist -> detect path)
-- [ ] Frontend: Live Sources status panel, auto-refreshing incident updates
-- [ ] Phase 4 Tests & Smoke check: live ingest pipeline tests, fault triggering & collector forwarding, commit Phase 4
+- [x] Demo app: FastAPI service with normal traffic log emission, fault injection endpoints (`/faults/db_connection_timeout`, `/faults/memory_leak`, `/faults/bad_config_deploy`, `/faults/auth_failure_spike`, `/faults/downstream_503`), `/health` endpoint, and remediation endpoints (`/admin/restart`, `/admin/clear-cache`, `/admin/rollback-config`)
+- [x] Collector: lightweight log tailer daemon with offset tracking, batch POSTs to `/api/ingest` with API key header and backoff
+- [x] Log sources API & MongoDB collection: API key authentication and status tracking
+- [x] `/api/ingest` shared pipeline verification (exact same parse -> normalize -> redact -> persist -> detect path)
+- [x] Frontend: Live Sources status panel, auto-refreshing incident updates
+- [x] Phase 4 Tests & Smoke check: live ingest pipeline tests, fault triggering & collector forwarding, commit Phase 4
 
 ## Phase 5: Tickets, Approvals, Remediation, Recovery Verification, Audit
 - [ ] Ticket lifecycle management: auto-creation per incident, P1-P4 priority, assignment, comments, state transitions

@@ -12,6 +12,8 @@ from app.api.auth import router as auth_router
 from app.api.uploads import router as uploads_router
 from app.api.logs import router as logs_router
 from app.api.incidents import router as incidents_router
+from app.api.ingest import router as ingest_router
+from app.api.admin import router as admin_router
 
 from app.services.ingestion import ingestion_service
 from app.workflows.detection_workflow import run_detection_pipeline
@@ -56,6 +58,8 @@ app.include_router(auth_router, prefix=settings.API_V1_STR)
 app.include_router(uploads_router, prefix=settings.API_V1_STR)
 app.include_router(logs_router, prefix=settings.API_V1_STR)
 app.include_router(incidents_router, prefix=settings.API_V1_STR)
+app.include_router(ingest_router, prefix=settings.API_V1_STR)
+app.include_router(admin_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def root():
