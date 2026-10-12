@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { Ticket, TicketPriority, TicketStatus } from '../types';
-import { TicketCheck, MessageSquare, User, RefreshCw, Send, CheckCircle2 } from 'lucide-react';
+import { TicketCheck, MessageSquare, User, RefreshCw, Send, CheckCircle2, Sparkles, ExternalLink, ShieldCheck } from 'lucide-react';
 
 export const Tickets: React.FC = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -183,6 +184,48 @@ export const Tickets: React.FC = () => {
                 Close
               </button>
             </div>
+
+            {/* Direct Incident Link */}
+            {selectedTicket.incidentId && (
+              <div style={{
+                background: 'rgba(56, 189, 248, 0.08)',
+                border: '1px solid var(--border-accent)',
+                borderRadius: '8px',
+                padding: '12px 14px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '8px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Sparkles size={16} color="var(--accent-cyan)" />
+                  <span style={{ fontSize: '13px', color: '#fff' }}>
+                    Linked Incident: <strong style={{ fontFamily: 'var(--font-mono)' }}>{selectedTicket.incidentId.slice(0, 10)}...</strong>
+                  </span>
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {selectedTicket.status === 'pending_approval' && (
+                    <Link
+                      to="/approvals"
+                      className="btn btn-secondary"
+                      style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', color: '#f59e0b', borderColor: '#f59e0b' }}
+                    >
+                      <ShieldCheck size={13} />
+                      <span>Review in Approvals</span>
+                    </Link>
+                  )}
+                  <Link
+                    to={`/incidents/${selectedTicket.incidentId}`}
+                    className="btn btn-primary"
+                    style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  >
+                    <span>Open AI Root Cause & Remediation</span>
+                    <ExternalLink size={13} />
+                  </Link>
+                </div>
+              </div>
+            )}
 
             {/* Lifecycle Controls */}
             <div style={{ background: 'var(--bg-secondary)', padding: '14px', borderRadius: '8px' }}>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { LogEvent, LogSeverity } from '../types';
-import { Search, Filter, ShieldAlert, ChevronDown, ChevronRight, RefreshCw, Hash, Database } from 'lucide-react';
+import { Search, Filter, ShieldAlert, ChevronDown, ChevronRight, RefreshCw, Hash, Database, AlertTriangle } from 'lucide-react';
 
 export const LogExplorer: React.FC = () => {
   const [logs, setLogs] = useState<LogEvent[]>([]);
@@ -289,6 +290,28 @@ export const LogExplorer: React.FC = () => {
                                   </div>
                                 </div>
                               )}
+                              <div style={{
+                                marginTop: '4px',
+                                paddingTop: '10px',
+                                borderTop: '1px solid var(--border-subtle)',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                flexWrap: 'wrap',
+                                gap: '10px'
+                              }}>
+                                <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
+                                  Service: <strong style={{ color: 'var(--accent-cyan)' }}>{log.service}</strong> &bull; Level: <strong>{log.severity}</strong>
+                                </div>
+                                <Link
+                                  to={`/incidents?service=${log.service}`}
+                                  className="btn btn-primary"
+                                  style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                                >
+                                  <AlertTriangle size={14} />
+                                  <span>Investigate Incidents for {log.service} &rarr;</span>
+                                </Link>
+                              </div>
                             </div>
                           </td>
                         </tr>

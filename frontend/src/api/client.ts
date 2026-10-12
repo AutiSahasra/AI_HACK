@@ -221,4 +221,22 @@ export const api = {
   getLiveSources: async (): Promise<Array<{ id: string; name: string; status: string; lastSeenAt: string; eventCount: number }>> => {
     return request('/admin/sources');
   },
+  getDashboardStats: async (): Promise<any> => {
+    return request('/admin/dashboard/stats');
+  },
+  getDemoStatus: async (): Promise<{ status: string; active_fault?: string; service?: string }> => {
+    return request('/admin/demo/status');
+  },
+  injectDemoFault: async (faultType: string): Promise<any> => {
+    return request('/admin/demo/inject-fault', {
+      method: 'POST',
+      body: JSON.stringify({ faultType }),
+    });
+  },
+  resetDemoFault: async (): Promise<any> => {
+    return request('/admin/demo/reset-fault', {
+      method: 'POST',
+    });
+  },
 };
+

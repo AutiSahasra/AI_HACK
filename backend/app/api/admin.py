@@ -3,6 +3,7 @@ from typing import List, Dict, Any, Optional
 from datetime import datetime, timezone
 from pydantic import BaseModel
 import secrets
+import httpx
 
 from app.api.deps import require_roles, get_current_user
 from app.models.user import UserRole
@@ -143,3 +144,45 @@ async def trigger_retention_cleanup(
         "cutoff": cutoff.isoformat(),
         "deletedCount": res.deleted_count
     }
+
+@router.get("/demo/status")
+async def get_demo_status(current_user: dict = Depends(get_current_user)):
+    url = f"{settings.DEMO_APP_URL.rstrip('/')}/health"
+    try:
+        async with httpx.AsyncClient(timeout=4.0) as client:
+            resp = await client.get(url)
+            return resp.json()
+    except Exception as e:
+        return {"status": "unreachable", "error": str(e)}
+
+class DemoFaultPayload(BaseModel):
+    faultType: str
+
+@router.post("/demo/inject-fault")
+async def trigger_demo_fault(payload: DemoFaultPayload, current_user: dict = Depends(get_current_user)):
+    url = f"{settings.DEMO_APP_URL.rstrip('/')}/faults/{payload.faultType}"
+    try:
+        async with httpx.AsyncClient(timeout=6.0) as client:
+            resp = await client.post(url)
+            if resp.status_code == 200:
+                return resp.json()
+            raise HTTPException(status_code=resp.status_code, detail=resp.text)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e))
+
+@router.post("/demo/reset-fault")
+async def reset_demo_fault(current_user: dict = Depends(get_current_user)):
+    url = f"{settings.DEMO_APP_URL.rstrip('/')}/admin/reset-fault"
+    try:
+        async with httpx.AsyncClient(timeout=6.0) as client:
+            resp = await client.post(url)
+            if resp.status_code == 200:
+                return resp.json()
+            raise HTTPException(status_code=resp.status_code, detail=resp.text)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e))
+

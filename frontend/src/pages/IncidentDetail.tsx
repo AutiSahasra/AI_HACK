@@ -15,8 +15,10 @@ import {
   ThumbsUp, 
   ThumbsDown,
   Wrench,
-  BookOpen
+  BookOpen,
+  ShieldCheck
 } from 'lucide-react';
+
 
 export const IncidentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -181,6 +183,68 @@ export const IncidentDetail: React.FC = () => {
         {incident.ticketId && (
           <div style={{ marginTop: '8px', fontSize: '13px', color: 'var(--text-dim)' }}>
             Linked Ticket: <Link to="/tickets" style={{ color: 'var(--accent-cyan)', fontWeight: 600, textDecoration: 'none' }}>{incident.ticketId}</Link>
+          </div>
+        )}
+
+        {incident.status === 'awaiting_approval' && (
+          <div style={{
+            marginTop: '14px',
+            padding: '14px 18px',
+            background: 'rgba(245, 158, 11, 0.12)',
+            border: '1px solid #f59e0b',
+            borderRadius: '8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '12px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <ShieldCheck size={20} color="#f59e0b" />
+              <div>
+                <div style={{ fontWeight: 700, color: '#f59e0b', fontSize: '14px' }}>
+                  Remediation Request Pending SRE Approval
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  A remediation action has been requested and is awaiting review in the protected approvals queue.
+                </div>
+              </div>
+            </div>
+            <Link to="/approvals" className="btn btn-secondary" style={{ borderColor: '#f59e0b', color: '#f59e0b', fontSize: '12px' }}>
+              Go to Approvals Queue &rarr;
+            </Link>
+          </div>
+        )}
+
+        {incident.status === 'resolved' && (
+          <div style={{
+            marginTop: '14px',
+            padding: '14px 18px',
+            background: 'rgba(16, 185, 129, 0.12)',
+            border: '1px solid var(--accent-emerald)',
+            borderRadius: '8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '12px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <CheckCircle2 size={20} color="var(--accent-emerald)" />
+              <div>
+                <div style={{ fontWeight: 700, color: 'var(--accent-emerald)', fontSize: '14px' }}>
+                  Incident Resolved & Verified
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                  Remediation was executed and post-action health checks confirmed healthy recovery with zero error recurrence.
+                </div>
+              </div>
+            </div>
+            {incident.ticketId && (
+              <Link to="/tickets" className="btn btn-secondary" style={{ fontSize: '12px' }}>
+                Check Ticket Status &rarr;
+              </Link>
+            )}
           </div>
         )}
       </div>
