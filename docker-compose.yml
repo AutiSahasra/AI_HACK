@@ -1,0 +1,82 @@
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: rca_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rca_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PROJECT_NAME=AI Root Cause Analysis Copilot
+      - MONGODB_URL=mongodb://mongo:27017
+      - MONGODB_DB_NAME=ai_rca_copilot
+      - JWT_SECRET=production-grade-super-secret-jwt-key-32-chars-long
+      - ACCESS_TOKEN_EXPIRE_MINUTES=480
+      - LLM_PROVIDER=mock
+      - DEMO_APP_URL=http://demo-app:8001
+      - LOG_COLLECTOR_API_KEY=dev-live-collector-key-secret
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  demo-app:
+    build:
+      context: ./demo-app
+      dockerfile: Dockerfile
+    container_name: rca_demo_app
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    volumes:
+      - demo_logs:/app/logs
+    environment:
+      - LOG_FILE_PATH=/app/logs/demo_app.log
+
+  collector:
+    build:
+      context: ./collector
+      dockerfile: Dockerfile
+    container_name: rca_collector
+    restart: unless-stopped
+    volumes:
+      - demo_logs:/app/logs
+    environment:
+      - DEMO_LOG_PATH=/app/logs/demo_app.log
+      - INGEST_URL=http://backend:8000/api/ingest
+      - API_KEY=dev-live-collector-key-secret
+      - SOURCE_ID=live_demo_app
+      - BATCH_SIZE=20
+      - POLL_INTERVAL=1.0
+    depends_on:
+      - backend
+      - demo-app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rca_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
+  demo_logs:

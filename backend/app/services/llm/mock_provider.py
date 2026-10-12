@@ -16,12 +16,23 @@ class MockProvider(LLMProvider):
         # Concatenate prompt text
         prompt_text = " ".join([m.get("content", "") for m in messages])
         
-        # Extract potential lines that look like logs from prompt
+        evidence_block = ""
+        if "REDACTED LOG EVIDENCE:" in prompt_text:
+            after_marker = prompt_text.split("REDACTED LOG EVIDENCE:", 1)[1]
+            if "SIMILAR HISTORICAL INCIDENTS:" in after_marker:
+                evidence_block = after_marker.split("SIMILAR HISTORICAL INCIDENTS:", 1)[0]
+            else:
+                evidence_block = after_marker
+        else:
+            evidence_block = prompt_text
+
         log_lines = []
-        for line in prompt_text.splitlines():
+        for line in evidence_block.splitlines():
             line_str = line.strip()
-            if any(k in line_str for k in ["ERROR", "CRITICAL", "WARN", "Exception", "timeout", "failed", "Traceback", "pool"]):
+            if any(k in line_str for k in ["ERROR", "CRITICAL", "WARN", "Exception", "timeout", "failed", "Traceback", "pool", "OSError", "Deadlock", "SSLError", "429"]):
                 log_lines.append(line_str)
+        if not log_lines:
+            log_lines = [l.strip() for l in evidence_block.splitlines() if len(l.strip()) > 10]
         if not log_lines:
             log_lines = ["No error messages detected in prompt log stream"]
 
@@ -106,6 +117,54 @@ class MockProvider(LLMProvider):
             inferences = ["Downstream dependency is overloaded or undergoing deployment"]
             confidence = 0.70
             tier = "medium"
+
+        elif "disk" in lower_prompt or "space" in lower_prompt or "errno 28" in lower_prompt:
+            cause_desc = "Filesystem disk space exhaustion preventing transactional write operations"
+            runbook_ids = ["rb-mem-leak"]
+            diag_checks = [
+                DiagnosticCheck(step="Run df -h to verify partition utilization across mount points", rationale="Identify which volume is at 100% capacity"),
+                DiagnosticCheck(step="Purge stale temporary files and logs in /var/data", rationale="Restore immediate disk space headroom")
+            ]
+            facts = ["OSError: [Errno 28] No space left on device encountered"]
+            inferences = ["Disk volume storage is completely full, halting persistent writes"]
+            confidence = 0.90
+            tier = "high"
+
+        elif "deadlock" in lower_prompt or "lock" in lower_prompt:
+            cause_desc = "Thread lock contention and circular deadlock between concurrent worker threads"
+            runbook_ids = ["rb-db-recovery"]
+            diag_checks = [
+                DiagnosticCheck(step="Generate thread dump to analyze lock acquisition graph", rationale="Find threads blocked on circular mutexes"),
+                DiagnosticCheck(step="Review transaction isolation levels and lock ordering", rationale="Prevent future lock inversion")
+            ]
+            facts = ["Deadlock detected between concurrent worker threads"]
+            inferences = ["Circular lock ordering between inventory and reservation operations"]
+            confidence = 0.85
+            tier = "high"
+
+        elif "ssl" in lower_prompt or "cert" in lower_prompt or "expired" in lower_prompt:
+            cause_desc = "Expired SSL/TLS leaf certificate causing upstream handshake rejection"
+            runbook_ids = ["rb-config-rollback"]
+            diag_checks = [
+                DiagnosticCheck(step="Verify certificate validity and expiration date via openssl s_client", rationale="Confirm certificate expiration timestamp"),
+                DiagnosticCheck(step="Rotate and deploy renewed TLS certificates", rationale="Restore secure communication")
+            ]
+            facts = ["SSLError: Certificate has expired encountered during TLS negotiation"]
+            inferences = ["Upstream TLS certificate renewal was missed or delayed"]
+            confidence = 0.94
+            tier = "high"
+
+        elif "rate limit" in lower_prompt or "429" in lower_prompt or "quota" in lower_prompt:
+            cause_desc = "Third-party service provider rate limit quota exhaustion returning HTTP 429"
+            runbook_ids = []
+            diag_checks = [
+                DiagnosticCheck(step="Inspect request volume against provider tier limits", rationale="Determine if traffic exceeds contracted TPS"),
+                DiagnosticCheck(step="Verify backoff and retry jitter configuration", rationale="Ensure exponential backoff prevents thundering herd")
+            ]
+            facts = ["HTTP 429 Too Many Requests received from notification provider"]
+            inferences = ["Outbound notification volume exceeded provider rate limits"]
+            confidence = 0.82
+            tier = "high"
 
         else:
             cause_desc = "Transient application error detected in service log stream"

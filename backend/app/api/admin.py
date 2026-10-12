@@ -86,3 +86,60 @@ async def get_system_settings(current_user: dict = Depends(require_roles([UserRo
         "environment": settings.ENVIRONMENT,
         "demo_app_url": settings.DEMO_APP_URL
     }
+
+@router.get("/dashboard/stats")
+async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
+    inc_col = DatabaseManager.get_collection("incidents")
+    logs_col = DatabaseManager.get_collection("logEvents")
+    tkt_col = DatabaseManager.get_collection("tickets")
+    appr_col = DatabaseManager.get_collection("actionApprovals")
+    fb_col = DatabaseManager.get_collection("feedback")
+
+    all_incidents = await inc_col.find({}).to_list(1000)
+    total_logs = await logs_col.count_documents({})
+    total_tickets = await tkt_col.count_documents({})
+    pending_approvals = await appr_col.count_documents({"status": "pending"})
+
+    # Status distribution
+    status_counts = {}
+    severity_counts = {}
+    for inc in all_incidents:
+        st = inc.get("status", "unknown")
+        sev = inc.get("severity", "unknown")
+        status_counts[st] = status_counts.get(st, 0) + 1
+        severity_counts[sev] = severity_counts.get(sev, 0) + 1
+
+    # Feedback stats
+    feedbacks = await fb_col.find({}).to_list(200)
+    useful_count = sum(1 for f in feedbacks if f.get("isUseful") is True)
+    total_feedback = len(feedbacks)
+    feedback_rate = (useful_count / total_feedback * 100) if total_feedback > 0 else 100.0
+
+    return {
+        "totalIncidents": len(all_incidents),
+        "totalLogs": total_logs,
+        "totalTickets": total_tickets,
+        "pendingApprovals": pending_approvals,
+        "statusDistribution": status_counts,
+        "severityDistribution": severity_counts,
+        "feedbackSummary": {
+            "totalFeedbacks": total_feedback,
+            "usefulCount": useful_count,
+            "satisfactionRate": round(feedback_rate, 1)
+        }
+    }
+
+@router.post("/retention/cleanup")
+async def trigger_retention_cleanup(
+    days: int = 30,
+    current_user: dict = Depends(require_roles([UserRole.ADMIN]))
+):
+    from datetime import timedelta
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    logs_col = DatabaseManager.get_collection("logEvents")
+    res = await logs_col.delete_many({"timestamp": {"$lt": cutoff}})
+    return {
+        "message": f"Pruned logs older than {days} days",
+        "cutoff": cutoff.isoformat(),
+        "deletedCount": res.deleted_count
+    }

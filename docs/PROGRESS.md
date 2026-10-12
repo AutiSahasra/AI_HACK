@@ -52,13 +52,13 @@
 - [x] Phase 5 Tests & Smoke check: RBAC policy bypass denial tests, verification success/failure tests, commit Phase 5
 
 ## Phase 6: Evaluation, Hardening, Documentation & E2E Validation
-- [ ] `/eval` synthetic dataset generator: 8+ incident scenarios + negative/benign scenarios
-- [ ] Evaluation runner script: metrics report (JSON + Markdown) for precision, recall, false-positive rate, RCA top-1/top-3 accuracy, evidence relevance, MTTR
-- [ ] Monitoring dashboard metrics & statistics endpoints
-- [ ] Data retention policy & cleanup service
-- [ ] Security hardening: rate limiting, CORS, input sanitization, security headers, upload size enforcement
-- [ ] Docker Compose orchestration: `mongo`, `backend`, `frontend`, `demo-app`, `collector`
-- [ ] Makefile and `.env.example`
-- [ ] Comprehensive documentation: `README.md`, `docs/API.md`, `docs/EVALUATION.md`, `docs/LIMITATIONS.md`
-- [ ] Full test suite execution & E2E smoke test verification
-- [ ] Final commit & delivery summary
+- [x] `/eval` synthetic dataset generator: 8+ incident scenarios + negative/benign scenarios
+- [x] Evaluation runner script: metrics report (JSON + Markdown) for precision, recall, false-positive rate, RCA top-1/top-3 accuracy, evidence relevance, MTTR
+- [x] Monitoring dashboard metrics & statistics endpoints
+- [x] Data retention policy & cleanup service
+- [x] Security hardening: rate limiting, CORS, input sanitization, security headers, upload size enforcement
+- [x] Docker Compose orchestration: `mongo`, `backend`, `frontend`, `demo-app`, `collector`
+- [x] Makefile and `.env.example`
+- [x] Comprehensive documentation: `README.md`, `docs/API.md`, `docs/EVALUATION.md`, `docs/LIMITATIONS.md`
+- [x] Full test suite execution & E2E smoke test verification
+- [x] Final commit & delivery summary
