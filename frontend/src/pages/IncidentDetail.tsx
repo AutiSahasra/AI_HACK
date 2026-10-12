@@ -1,0 +1,1 @@
+export { IncidentDetail } from './Placeholders';
