@@ -41,15 +41,15 @@
 - [x] Phase 4 Tests & Smoke check: live ingest pipeline tests, fault triggering & collector forwarding, commit Phase 4
 
 ## Phase 5: Tickets, Approvals, Remediation, Recovery Verification, Audit
-- [ ] Ticket lifecycle management: auto-creation per incident, P1-P4 priority, assignment, comments, state transitions
-- [ ] Remediation action allow-list (strictly compiled code paths, no shell commands)
-- [ ] Approval workflow & backend policy enforcer: dual-role check, self-approval prevention, expiration
-- [ ] Recovery verification service: post-action HTTP `/health` poll + log error silence verification; auto-resolve or escalate
-- [ ] Auto-escalation engine: low confidence, insufficient evidence, repeated incident, verification failure
-- [ ] Append-only audit logging: immutable audit trails for all actions, state transitions, approvals, logins
-- [ ] Save resolved incidents to `historicalIncidents`
-- [ ] Frontend: Ticket board/list & detail, Approval queue, Action request & execution status modal, Audit log viewer, Admin settings (users, sources, rules, runbooks, allow-list)
-- [ ] Phase 5 Tests & Smoke check: RBAC policy bypass denial tests, verification success/failure tests, commit Phase 5
+- [x] Ticket lifecycle management: auto-creation per incident, P1-P4 priority, assignment, comments, state transitions
+- [x] Remediation action allow-list (strictly compiled code paths, no shell commands)
+- [x] Approval workflow & backend policy enforcer: dual-role check, self-approval prevention, expiration
+- [x] Recovery verification service: post-action HTTP `/health` poll + log error silence verification; auto-resolve or escalate
+- [x] Auto-escalation engine: low confidence, insufficient evidence, repeated incident, verification failure
+- [x] Append-only audit logging: immutable audit trails for all actions, state transitions, approvals, logins
+- [x] Save resolved incidents to `historicalIncidents`
+- [x] Frontend: Ticket board/list & detail, Approval queue, Action request & execution status modal, Audit log viewer, Admin settings (users, sources, rules, runbooks, allow-list)
+- [x] Phase 5 Tests & Smoke check: RBAC policy bypass denial tests, verification success/failure tests, commit Phase 5
 
 ## Phase 6: Evaluation, Hardening, Documentation & E2E Validation
 - [ ] `/eval` synthetic dataset generator: 8+ incident scenarios + negative/benign scenarios

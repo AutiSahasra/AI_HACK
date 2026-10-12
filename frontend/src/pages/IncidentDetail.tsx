@@ -118,6 +118,20 @@ export const IncidentDetail: React.FC = () => {
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
+              onClick={() => {
+                const action = prompt('Enter allow-listed remediation action (restart_demo_service, clear_demo_cache, rollback_demo_config):', 'restart_demo_service');
+                if (action) {
+                  api.requestAction(incident.id, action)
+                    .then(res => alert(`Remediation action '${action}' requested. Status: ${res.status}`))
+                    .catch(err => alert(err.message));
+                }
+              }}
+              className="btn btn-secondary"
+            >
+              <Wrench size={16} />
+              <span>Request Remediation</span>
+            </button>
+            <button
               onClick={handleTriggerRca}
               className="btn btn-primary"
               disabled={analyzing}
@@ -127,6 +141,11 @@ export const IncidentDetail: React.FC = () => {
             </button>
           </div>
         </div>
+        {incident.ticketId && (
+          <div style={{ marginTop: '8px', fontSize: '13px', color: 'var(--text-dim)' }}>
+            Linked Ticket: <Link to="/tickets" style={{ color: 'var(--accent-cyan)', fontWeight: 600, textDecoration: 'none' }}>{incident.ticketId}</Link>
+          </div>
+        )}
       </div>
 
       {/* Lifecycle Progress Bar */}

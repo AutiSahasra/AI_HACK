@@ -95,6 +95,9 @@ class GroupingService:
                 title = f"{service}: {match.rule_name}"
                 now = datetime.now(timezone.utc)
 
+                from app.services.tickets import ticket_service
+                ticket_id = await ticket_service.create_ticket_for_incident(new_id, title, match.severity)
+
                 incident_doc = {
                     "_id": new_id,
                     "title": title,
@@ -115,7 +118,7 @@ class GroupingService:
                     "recommendedRunbookIds": [],
                     "overallUncertainty": None,
                     "insufficientEvidence": False,
-                    "ticketId": None,
+                    "ticketId": ticket_id,
                     "escalationReason": None,
                     "isRepeated": False,
                     "createdAt": now,
