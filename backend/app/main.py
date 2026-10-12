@@ -15,11 +15,15 @@ from app.api.incidents import router as incidents_router
 
 from app.services.ingestion import ingestion_service
 from app.workflows.detection_workflow import run_detection_pipeline
+from app.services.grouping import grouping_service
+from app.services.rca import rca_service
 
 setup_logging()
 
 # Register shared detection pipeline for upload and live events
 ingestion_service.register_detection_hook(run_detection_pipeline)
+# Register background RCA analysis hook
+grouping_service.register_rca_hook(rca_service.analyze_incident)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

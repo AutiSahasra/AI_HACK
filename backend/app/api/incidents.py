@@ -69,6 +69,40 @@ async def get_incident_events(
             e["id"] = str(e["_id"])
     return events
 
+@router.post("/{incident_id}/analyze")
+async def trigger_rca(
+    incident_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    doc = await incident_repo.get_by_id(incident_id)
+    if not doc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Incident not found")
+    
+    from app.services.rca import rca_service
+    import asyncio
+    asyncio.create_task(rca_service.analyze_incident(incident_id))
+    return {"message": "Root cause analysis scheduled in background"}
+
+@router.get("/knowledge/runbooks")
+async def list_runbooks(
+    service: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    from app.core.database import DatabaseManager
+    col = DatabaseManager.get_collection("runbooks")
+    fltr = {"service": service} if service else {}
+    return await col.find(fltr).to_list(100)
+
+@router.get("/knowledge/historical")
+async def list_historical_incidents(
+    service: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    from app.core.database import DatabaseManager
+    col = DatabaseManager.get_collection("historicalIncidents")
+    fltr = {"service": service} if service else {}
+    return await col.find(fltr).to_list(100)
+
 @router.post("/{incident_id}/feedback")
 async def submit_feedback(
     incident_id: str,

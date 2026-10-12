@@ -23,14 +23,14 @@
 - [x] Phase 2 Tests & Smoke check: detection rules tests, grouping & dedup tests, commit Phase 2
 
 ## Phase 3: Retrieval and AI Root-Cause Analysis
-- [ ] Provider-independent LLM service interface: `AnthropicProvider`, `OpenAICompatibleProvider`, `MockProvider`
-- [ ] Retrieval service: MongoDB text index search over historical incidents and runbooks
-- [ ] RCA async workflow: collect evidence, redact, retrieve top-k similar incidents + runbooks, generate strict JSON schema
-- [ ] Evidence Grounding & Anti-Hallucination verification: drop/flag unverified citations, separate observed facts vs AI inferences
-- [ ] Recommendations generator: diagnostic checks & runbook steps with relevance rationale
-- [ ] Feedback API: `POST /api/incidents/{id}/feedback` (useful / not useful)
-- [ ] Frontend: Analysis view in Incident Detail with confidence badges, evidence citations, facts vs inferences, similar cases, runbooks, feedback button
-- [ ] Phase 3 Tests & Smoke check: RCA schema validation tests, anti-hallucination tests, retrieval tests, commit Phase 3
+- [x] Provider-independent LLM service interface: `AnthropicProvider`, `OpenAICompatibleProvider`, `MockProvider`
+- [x] Retrieval service: MongoDB text index search over historical incidents and runbooks
+- [x] RCA async workflow: collect evidence, redact, retrieve top-k similar incidents + runbooks, generate strict JSON schema
+- [x] Evidence Grounding & Anti-Hallucination verification: drop/flag unverified citations, separate observed facts vs AI inferences
+- [x] Recommendations generator: diagnostic checks & runbook steps with relevance rationale
+- [x] Feedback API: `POST /api/incidents/{id}/feedback` (useful / not useful)
+- [x] Frontend: Analysis view in Incident Detail with confidence badges, evidence citations, facts vs inferences, similar cases, runbooks, feedback button
+- [x] Phase 3 Tests & Smoke check: RCA schema validation tests, anti-hallucination tests, retrieval tests, commit Phase 3
 
 ## Phase 4: Live Ingestion with Demo App & Collector
 - [ ] Demo app: FastAPI service with normal traffic log emission, fault injection endpoints (`/faults/db_connection_timeout`, `/faults/memory_leak`, `/faults/bad_config_deploy`, `/faults/auth_failure_spike`, `/faults/downstream_503`), `/health` endpoint, and remediation endpoints (`/admin/restart`, `/admin/clear-cache`, `/admin/rollback-config`)
