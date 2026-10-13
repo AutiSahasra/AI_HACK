@@ -17,11 +17,13 @@ from app.api.admin import router as admin_router
 from app.api.tickets import router as tickets_router
 from app.api.remediation import router as remediation_router
 from app.api.audit import router as audit_router
+from app.api.ml import router as ml_router
 
 from app.services.ingestion import ingestion_service
 from app.workflows.detection_workflow import run_detection_pipeline
 from app.services.grouping import grouping_service
 from app.services.rca import rca_service
+from app.core.db_indexes import initialize_all_indexes
 
 setup_logging()
 
@@ -34,6 +36,7 @@ grouping_service.register_rca_hook(rca_service.analyze_incident)
 async def lifespan(app: FastAPI):
     # Startup
     await DatabaseManager.connect()
+    await initialize_all_indexes()
     await seed_all_data()
     yield
     # Shutdown
@@ -66,6 +69,7 @@ app.include_router(admin_router, prefix=settings.API_V1_STR)
 app.include_router(tickets_router, prefix=settings.API_V1_STR)
 app.include_router(remediation_router, prefix=settings.API_V1_STR)
 app.include_router(audit_router, prefix=settings.API_V1_STR)
+app.include_router(ml_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def root():

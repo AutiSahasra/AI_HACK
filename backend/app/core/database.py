@@ -11,12 +11,36 @@ class InMemoryCollection:
     def __init__(self, name: str):
         self.name = name
         self._docs: List[Dict[str, Any]] = []
+        self._indexes: List[Dict[str, Any]] = []
 
     async def insert_one(self, doc: Dict[str, Any]):
         doc_copy = dict(doc)
         if "_id" not in doc_copy:
             import uuid
             doc_copy["_id"] = str(uuid.uuid4())
+
+        # Check unique index constraints
+        for idx in self._indexes:
+            if idx.get("unique"):
+                keys = idx["keys"]
+                # Form key tuple or dict
+                query = {}
+                for k in keys:
+                    field_name = k[0] if isinstance(k, (tuple, list)) else k
+                    val = self._get_nested(doc_copy, field_name)
+                    if val is not None:
+                        query[field_name] = val
+                if query:
+                    for existing in self._docs:
+                        match = True
+                        for fk, fv in query.items():
+                            if self._get_nested(existing, fk) != fv:
+                                match = False
+                                break
+                        if match:
+                            from pymongo.errors import DuplicateKeyError
+                            raise DuplicateKeyError(f"E11000 duplicate key error collection: {self.name} index: {idx.get('name')} dup key: {query}")
+
         self._docs.append(doc_copy)
         class InsertResult:
             def __init__(self, inserted_id):
@@ -161,8 +185,65 @@ class InMemoryCollection:
                 vals.add(d[key])
         return list(vals)
 
+    async def update_many(self, filter: Dict[str, Any], update: Dict[str, Any]):
+        matched = await self._filter_docs(filter)
+        mod_cnt = 0
+        for doc in matched:
+            if "$set" in update:
+                for k, v in update["$set"].items():
+                    doc[k] = v
+            if "$addToSet" in update:
+                for k, v in update["$addToSet"].items():
+                    if k not in doc or not isinstance(doc[k], list):
+                        doc[k] = []
+                    if v not in doc[k]:
+                        doc[k].append(v)
+            if "$pull" in update:
+                for k, v in update["$pull"].items():
+                    if k in doc and isinstance(doc[k], list) and v in doc[k]:
+                        doc[k].remove(v)
+            mod_cnt += 1
+        class ManyUpdateResult:
+            def __init__(self, c):
+                self.modified_count = c
+                self.matched_count = c
+        return ManyUpdateResult(mod_cnt)
+
     async def create_index(self, keys, **kwargs):
-        return "index_ok"
+        if isinstance(keys, str):
+            keys = [(keys, 1)]
+        idx_dict = {"keys": keys, **kwargs}
+        if "name" not in idx_dict:
+            idx_dict["name"] = "_".join(f"{k[0]}_{k[1]}" for k in keys)
+        self._indexes.append(idx_dict)
+        return idx_dict["name"]
+
+    async def create_indexes(self, index_models):
+        names = []
+        for im in index_models:
+            # pymongo IndexModel has document or keys
+            keys = getattr(im, "document", None) or getattr(im, "keys", None)
+            kwargs = {}
+            if hasattr(im, "kwargs"):
+                kwargs = im.kwargs
+            elif hasattr(im, "_IndexModel__extra"):
+                kwargs = getattr(im, "_IndexModel__extra")
+            name = await self.create_index(keys, **kwargs)
+            names.append(name)
+        return names
+
+    def list_indexes(self):
+        class IndexCursor:
+            def __init__(self, indexes):
+                self.indexes = indexes
+            async def to_list(self, length=None):
+                return list(self.indexes)
+            def __aiter__(self):
+                async def gen():
+                    for idx in self.indexes:
+                        yield idx
+                return gen()
+        return IndexCursor(self._indexes)
 
     async def _filter_docs(self, filter_dict: Dict[str, Any]) -> List[Dict[str, Any]]:
         results = []

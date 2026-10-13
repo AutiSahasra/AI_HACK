@@ -30,6 +30,15 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: str = ""
     ANTHROPIC_MODEL: str = "claude-3-5-sonnet-20241022"
 
+    # Redis
+    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_CACHE_TTL_SECONDS: int = 300
+
+    # ML Models
+    MINILM_MODEL_ID: str = "sentence-transformers/all-MiniLM-L6-v2"
+    MINILM_EMBEDDING_DIM: int = 384
+    XGBOOST_MODEL_DIR: str = "ml_artifacts"
+
     # Live demo app URL (for health checks and safe remediation executor)
     DEMO_APP_URL: str = "http://localhost:8001"
 
