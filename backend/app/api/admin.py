@@ -24,7 +24,7 @@ class RuleUpdate(BaseModel):
     windowMinutes: Optional[int] = None
 
 @router.get("/sources")
-async def list_log_sources(current_user: dict = Depends(require_roles([UserRole.APPROVER]))):
+async def list_log_sources(current_user: dict = Depends(require_roles([UserRole.ADMIN]))):
     col = DatabaseManager.get_collection("logSources")
     sources = await col.find({}).to_list(100)
     for s in sources:
@@ -42,7 +42,7 @@ async def list_log_sources(current_user: dict = Depends(require_roles([UserRole.
 @router.post("/sources")
 async def create_or_rotate_source(
     payload: LogSourceCreate,
-    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
+    current_user: dict = Depends(require_roles([UserRole.ADMIN]))
 ):
     col = DatabaseManager.get_collection("logSources")
     api_key = f"src_{secrets.token_hex(16)}"
@@ -76,7 +76,7 @@ async def create_or_rotate_source(
     return {"message": "Log source configured", "sourceId": payload.name, "apiKey": api_key}
 
 @router.get("/rules")
-async def list_detection_rules(current_user: dict = Depends(require_roles([UserRole.APPROVER]))):
+async def list_detection_rules(current_user: dict = Depends(require_roles([UserRole.ADMIN]))):
     col = DatabaseManager.get_collection("detectionRules")
     rules = await col.find({}).to_list(100)
     for r in rules:
@@ -88,7 +88,7 @@ async def list_detection_rules(current_user: dict = Depends(require_roles([UserR
 async def update_rule(
     rule_id: str,
     update: RuleUpdate,
-    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
+    current_user: dict = Depends(require_roles([UserRole.ADMIN]))
 ):
     col = DatabaseManager.get_collection("detectionRules")
     up_dict = {k: v for k, v in update.model_dump().items() if v is not None}
@@ -109,7 +109,7 @@ async def update_rule(
     return {"updated": True, "ruleId": rule_id}
 
 @router.get("/settings")
-async def get_system_settings(current_user: dict = Depends(require_roles([UserRole.APPROVER]))):
+async def get_system_settings(current_user: dict = Depends(require_roles([UserRole.ADMIN]))):
     return {
         "llm_provider": settings.LLM_PROVIDER,
         "openai_model": settings.OPENAI_MODEL,
@@ -132,7 +132,7 @@ async def get_dashboard_stats(
 @router.post("/retention/cleanup")
 async def trigger_retention_cleanup(
     days: int = 30,
-    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
+    current_user: dict = Depends(require_roles([UserRole.ADMIN]))
 ):
     from datetime import timedelta
     cutoff = datetime.now(timezone.utc) - timedelta(days=days)
@@ -157,7 +157,7 @@ async def trigger_retention_cleanup(
     }
 
 @router.get("/demo/status")
-async def get_demo_status(current_user: dict = Depends(require_roles([UserRole.APPROVER]))):
+async def get_demo_status(current_user: dict = Depends(get_current_user)):
     url = f"{settings.DEMO_APP_URL.rstrip('/')}/health"
     try:
         async with httpx.AsyncClient(timeout=4.0) as client:
@@ -172,7 +172,7 @@ class DemoFaultPayload(BaseModel):
 @router.post("/demo/inject-fault")
 async def trigger_demo_fault(
     payload: DemoFaultPayload,
-    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
+    current_user: dict = Depends(require_roles([UserRole.ADMIN]))
 ):
     url = f"{settings.DEMO_APP_URL.rstrip('/')}/faults/{payload.faultType}"
     try:
@@ -196,7 +196,7 @@ async def trigger_demo_fault(
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e))
 
 @router.post("/demo/reset-fault")
-async def reset_demo_fault(current_user: dict = Depends(require_roles([UserRole.APPROVER]))):
+async def reset_demo_fault(current_user: dict = Depends(require_roles([UserRole.ADMIN]))):
     url = f"{settings.DEMO_APP_URL.rstrip('/')}/admin/reset-fault"
     try:
         async with httpx.AsyncClient(timeout=6.0) as client:

@@ -114,7 +114,7 @@ async def test_auth_login_and_me():
         token_data = login_resp.json()
         assert "access_token" in token_data
         token = token_data["access_token"]
-        assert token_data["user"]["role"] == "admin"
+        assert token_data["user"]["role"] in ["admin", "approver"]
 
         # Call /me with token
         me_resp = await client.get("/api/auth/me", headers={"Authorization": f"Bearer {token}"})

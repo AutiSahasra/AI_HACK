@@ -22,7 +22,6 @@ async def migrate_admin_accounts():
 
 async def seed_all_data():
     logger.info("Initializing database seeds...")
-    await migrate_admin_accounts()
     await seed_users()
     await seed_detection_rules()
     await seed_runbooks()
@@ -36,7 +35,7 @@ async def seed_users():
             "username": "admin",
             "email": "admin@example.com",
             "password": "adminpassword123",
-            "role": UserRole.APPROVER,
+            "role": UserRole.ADMIN,
             "full_name": "System Administrator",
         },
         {
@@ -60,10 +59,6 @@ async def seed_users():
         if not existing:
             await user_repo.create(UserCreate(**u))
             logger.info(f"Seeded user: {u['username']} ({u['role'].value})")
-        elif existing.get("role") == "admin":
-            users_col = DatabaseManager.get_collection("users")
-            await users_col.update_one({"_id": existing["_id"]}, {"$set": {"role": "approver"}})
-            logger.info(f"Migrated existing user {u['username']} to approver role.")
 
 async def seed_detection_rules():
     col = DatabaseManager.get_collection("detectionRules")

@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 class UserRole(str, Enum):
     SUPPORT_ENGINEER = "support_engineer"
     APPROVER = "approver"
+    ADMIN = "admin"
 
 class UserBase(BaseModel):
     username: str
@@ -13,13 +14,6 @@ class UserBase(BaseModel):
     role: UserRole
     full_name: str
     is_active: bool = True
-
-    @field_validator("role", mode="before")
-    @classmethod
-    def _migrate_role(cls, v):
-        if v == "admin":
-            return UserRole.APPROVER
-        return v
 
 class UserCreate(UserBase):
     password: str

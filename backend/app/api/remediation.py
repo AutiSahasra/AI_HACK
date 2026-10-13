@@ -66,7 +66,7 @@ async def list_remediation_actions(current_user: dict = Depends(get_current_user
 @router.post("/direct-execute")
 async def direct_execute_remediation(
     payload: DirectExecutionPayload,
-    current_user: dict = Depends(require_roles([UserRole.APPROVER, UserRole.ADMIN]))
+    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
 ):
     user_role = current_user.get("role", "approver")
     username = current_user.get("username", "anonymous")
@@ -442,7 +442,7 @@ async def decide_approval(
 @router.post("/execute/{approval_id}")
 async def execute_remediation(
     approval_id: str,
-    current_user: dict = Depends(require_roles([UserRole.APPROVER, UserRole.ADMIN]))
+    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
 ):
     col = DatabaseManager.get_collection("actionApprovals")
     approval_doc = await col.find_one({"_id": approval_id})
