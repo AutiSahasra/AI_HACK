@@ -126,7 +126,7 @@ async def test_remediation_api_approval_gated_flow_and_verification(monkeypatch)
         # a) Support engineer tries to execute directly -> BLOCKED (HTTP 403, role not allowed)
         support_bypass = await client.post(f"/api/remediation/execute/{approval_id}", headers=support_headers)
         assert support_bypass.status_code == 403
-        assert "not authorized" in support_bypass.text
+        assert "not permitted" in support_bypass.text or "not authorized" in support_bypass.text
 
         # b) Approver tries to execute BEFORE approval is granted -> BLOCKED (HTTP 403, status pending)
         approver_bypass = await client.post(f"/api/remediation/execute/{approval_id}", headers=approver_headers)

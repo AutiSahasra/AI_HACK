@@ -41,11 +41,15 @@ async def get_current_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Inactive user account",
         )
+    if user.get("role") == "admin":
+        user["role"] = UserRole.APPROVER.value
     return user
 
 def require_roles(allowed_roles: List[UserRole]):
     async def role_checker(current_user: dict = Depends(get_current_user)) -> dict:
         user_role = current_user.get("role")
+        if user_role == "admin":
+            user_role = UserRole.APPROVER.value
         role_vals = [r.value if isinstance(r, UserRole) else r for r in allowed_roles]
         if user_role not in role_vals:
             raise HTTPException(

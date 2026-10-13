@@ -127,10 +127,11 @@ class InMemoryCollection:
             upserted_id = new_doc["_id"]
 
         class UpdateResult:
-            def __init__(self, m, u):
-                self.modified_count = m
+            def __init__(self, matched_cnt, mod_cnt, u):
+                self.matched_count = matched_cnt
+                self.modified_count = mod_cnt
                 self.upserted_id = u
-        return UpdateResult(modified_count, upserted_id)
+        return UpdateResult(1 if matched else 0, modified_count, upserted_id)
 
     async def count_documents(self, filter: Dict[str, Any]) -> int:
         matched = await self._filter_docs(filter)
@@ -147,7 +148,18 @@ class InMemoryCollection:
         matched = await self._filter_docs(filter)
         for m in matched:
             self._docs.remove(m)
-        return len(matched)
+        class DeleteResult:
+            def __init__(self, c):
+                self.deleted_count = c
+        return DeleteResult(len(matched))
+
+    async def distinct(self, key: str, filter: Optional[Dict[str, Any]] = None) -> List[Any]:
+        docs = await self._filter_docs(filter or {})
+        vals = set()
+        for d in docs:
+            if key in d and d[key] is not None:
+                vals.add(d[key])
+        return list(vals)
 
     async def create_index(self, keys, **kwargs):
         return "index_ok"

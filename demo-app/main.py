@@ -7,7 +7,7 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, status, Response
 from pydantic import BaseModel
 
-LOG_DIR = os.environ.get("LOG_DIR", os.path.join(os.path.dirname(__file__), "..", "logs"))
+LOG_DIR = os.environ.get("LOG_DIR", os.path.join(os.path.dirname(__file__), "logs"))
 os.makedirs(LOG_DIR, exist_ok=True)
 LOG_FILE = os.environ.get("LOG_FILE", os.path.join(LOG_DIR, "demo_app.log"))
 

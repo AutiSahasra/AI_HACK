@@ -9,3 +9,4 @@ export { Approvals } from './Approvals';
 export { AuditLog } from './AuditLog';
 export { Knowledge } from './Knowledge';
 export { AdminSettings } from './AdminSettings';
+export { Forbidden } from './Forbidden';

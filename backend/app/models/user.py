@@ -1,12 +1,11 @@
 from enum import Enum
-from pydantic import BaseModel, Field, EmailStr, ConfigDict
+from pydantic import BaseModel, Field, EmailStr, ConfigDict, field_validator
 from typing import Optional
 from datetime import datetime, timezone
 
 class UserRole(str, Enum):
     SUPPORT_ENGINEER = "support_engineer"
     APPROVER = "approver"
-    ADMIN = "admin"
 
 class UserBase(BaseModel):
     username: str
@@ -14,6 +13,13 @@ class UserBase(BaseModel):
     role: UserRole
     full_name: str
     is_active: bool = True
+
+    @field_validator("role", mode="before")
+    @classmethod
+    def _migrate_role(cls, v):
+        if v == "admin":
+            return UserRole.APPROVER
+        return v
 
 class UserCreate(UserBase):
     password: str

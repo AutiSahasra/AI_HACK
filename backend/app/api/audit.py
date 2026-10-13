@@ -13,7 +13,7 @@ async def list_audit_trail(
     entity_type: Optional[str] = None,
     entity_id: Optional[str] = None,
     limit: int = Query(100, ge=1, le=500),
-    current_user: dict = Depends(require_roles([UserRole.APPROVER, UserRole.ADMIN]))
+    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
 ):
     items = await audit_service.list_audit_logs(
         actor=actor,

@@ -45,6 +45,7 @@ frontend/node_modules/
 
 # Logs
 logs/
+demo-app/logs/
 *.log
 
 # OS

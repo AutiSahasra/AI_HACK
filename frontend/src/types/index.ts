@@ -123,9 +123,8 @@ export interface Incident {
   updatedAt: string;
 }
 
-// Phase 5 Ticket & Remediation Types
 export type TicketPriority = 'P1' | 'P2' | 'P3' | 'P4';
-export type TicketStatus = 'open' | 'in_progress' | 'pending_approval' | 'verifying' | 'resolved' | 'closed';
+export type TicketStatus = 'open' | 'in_progress' | 'pending_approval' | 'verifying' | 'resolved' | 'closed' | 'escalated' | 'reopened';
 
 export interface TicketComment {
   id: string;
@@ -152,12 +151,28 @@ export interface RemediationActionDef {
   id: string;
   name: string;
   description: string;
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: 'low' | 'medium' | 'high' | 'critical';
   requiresApproval: boolean;
+  requiresDualApproval?: boolean;
   allowedRoles: UserRole[];
   executorKey: string;
   associatedHealthCheck: string;
   timeoutSeconds: number;
+}
+
+export interface RemediationRecommendation {
+  actionName: string;
+  actionTitle: string;
+  relevanceReason: string;
+  supportingEvidence: string[];
+  expectedOutcome: string;
+  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  affectedService: string;
+  parameters: Record<string, any>;
+  requiresApproval: boolean;
+  confidence: number;
+  runbookReference?: string | null;
+  historicalIncidentReference?: string | null;
 }
 
 export interface ActionApprovalRecord {
@@ -170,6 +185,14 @@ export interface ActionApprovalRecord {
   approvedBy?: string | null;
   approvedByRole?: UserRole | null;
   rejectionReason?: string | null;
+  parameters?: Record<string, any>;
+  justification?: string | null;
+  riskLevel?: string | null;
+  expectedOutcome?: string | null;
+  supportingEvidence?: string[];
+  runbookReference?: string | null;
+  verificationStatus?: string | null;
+  verificationError?: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -7,8 +7,8 @@ import logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("collector")
 
-LOG_FILE = os.environ.get("LOG_FILE", os.path.join(os.path.dirname(__file__), "..", "logs", "demo_app.log"))
-OFFSET_FILE = os.environ.get("OFFSET_FILE", os.path.join(os.path.dirname(__file__), "..", "logs", "collector_offset.json"))
+LOG_FILE = os.environ.get("LOG_FILE", os.path.join(os.path.dirname(__file__), "..", "demo-app", "logs", "demo_app.log"))
+OFFSET_FILE = os.environ.get("OFFSET_FILE", os.path.join(os.path.dirname(__file__), "..", "demo-app", "logs", "collector_offset.json"))
 BACKEND_URL = os.environ.get("BACKEND_URL", "http://localhost:8000/api/ingest")
 API_KEY = os.environ.get("COLLECTOR_API_KEY", "collector-secret-api-key-live-demo-2026")
 SOURCE_ID = os.environ.get("SOURCE_ID", "demo-app-live")

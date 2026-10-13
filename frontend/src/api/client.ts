@@ -6,7 +6,8 @@ import {
   Incident, 
   Ticket, 
   RemediationActionDef, 
-  ActionApprovalRecord, 
+  ActionApprovalRecord,
+  RemediationRecommendation,
   AuditLogEntry, 
   Runbook, 
   HistoricalIncident 
@@ -182,11 +183,43 @@ export const api = {
   getRemediationActions: async (): Promise<RemediationActionDef[]> => {
     return request<RemediationActionDef[]>('/remediation/actions');
   },
-  requestAction: async (incidentId: string, actionName: string): Promise<ActionApprovalRecord> => {
+  getRecommendations: async (incidentId: string): Promise<RemediationRecommendation[]> => {
+    return request<RemediationRecommendation[]>(`/remediation/recommendations/${incidentId}`);
+  },
+  directExecuteAction: async (payload: {
+    incidentId: string;
+    actionName: string;
+    parameters?: Record<string, any>;
+    justification?: string;
+  }): Promise<{ status: string; message: string; executionId?: string }> => {
+    return request('/remediation/direct-execute', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+  requestAction: async (payload: {
+    incidentId: string;
+    actionName: string;
+    parameters?: Record<string, any>;
+    justification?: string;
+    riskLevel?: string;
+    expectedOutcome?: string;
+    supportingEvidence?: string[];
+    runbookReference?: string;
+  } | string, maybeActionName?: string): Promise<ActionApprovalRecord> => {
+    const body = typeof payload === 'string'
+      ? { incidentId: payload, actionName: maybeActionName || '' }
+      : payload;
     return request<ActionApprovalRecord>('/remediation/request', {
       method: 'POST',
-      body: JSON.stringify({ incidentId, actionName }),
+      body: JSON.stringify(body),
     });
+  },
+  getMyRequests: async (): Promise<ActionApprovalRecord[]> => {
+    return request<ActionApprovalRecord[]>('/remediation/my-requests');
+  },
+  getIncidentRequests: async (incidentId: string): Promise<ActionApprovalRecord[]> => {
+    return request<ActionApprovalRecord[]>(`/remediation/incident/${incidentId}/requests`);
   },
   getApprovals: async (status?: string): Promise<ActionApprovalRecord[]> => {
     const q = status ? `?status=${status}` : '';
@@ -221,8 +254,11 @@ export const api = {
   getLiveSources: async (): Promise<Array<{ id: string; name: string; status: string; lastSeenAt: string; eventCount: number }>> => {
     return request('/admin/sources');
   },
-  getDashboardStats: async (): Promise<any> => {
-    return request('/admin/dashboard/stats');
+  getDashboardStats: async (timeRange: string = '24h', service?: string): Promise<any> => {
+    const q = new URLSearchParams();
+    if (timeRange) q.append('time_range', timeRange);
+    if (service) q.append('service', service);
+    return request(`/admin/dashboard/stats?${q.toString()}`);
   },
   getDemoStatus: async (): Promise<{ status: string; active_fault?: string; service?: string }> => {
     return request('/admin/demo/status');

@@ -6,14 +6,22 @@ from app.models.log_event import LogSeverity
 
 class IncidentStatus(str, Enum):
     NEW = "new"
+    OPEN = "open"
     ANALYZING = "analyzing"
+    INVESTIGATING = "investigating"
     ANALYZED = "analyzed"
+    ANALYSIS_READY = "analysis_ready"
     AWAITING_APPROVAL = "awaiting_approval"
+    APPROVED = "approved"
     REMEDIATING = "remediating"
+    EXECUTING = "executing"
     VERIFYING = "verifying"
     RESOLVED = "resolved"
+    REJECTED = "rejected"
+    FAILED = "failed"
     ESCALATED = "escalated"
     FAILED_ANALYSIS = "failed_analysis"
+    CLOSED = "closed"
 
 class EvidenceItem(BaseModel):
     eventId: Optional[str] = None

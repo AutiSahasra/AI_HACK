@@ -10,6 +10,8 @@ from app.models.user import UserRole
 from app.core.database import DatabaseManager
 from app.core.config import settings
 
+from app.services.audit import audit_service
+
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 class LogSourceCreate(BaseModel):
@@ -22,18 +24,25 @@ class RuleUpdate(BaseModel):
     windowMinutes: Optional[int] = None
 
 @router.get("/sources")
-async def list_log_sources(current_user: dict = Depends(get_current_user)):
+async def list_log_sources(current_user: dict = Depends(require_roles([UserRole.APPROVER]))):
     col = DatabaseManager.get_collection("logSources")
     sources = await col.find({}).to_list(100)
     for s in sources:
         if "_id" in s:
             s["id"] = str(s["_id"])
+        # Mask API key in responses to prevent credential exposure
+        if "apiKey" in s and s["apiKey"]:
+            raw_key = str(s["apiKey"])
+            if len(raw_key) > 10:
+                s["apiKey"] = f"{raw_key[:6]}...{raw_key[-4:]}"
+            else:
+                s["apiKey"] = "src_***"
     return sources
 
 @router.post("/sources")
 async def create_or_rotate_source(
     payload: LogSourceCreate,
-    current_user: dict = Depends(require_roles([UserRole.ADMIN]))
+    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
 ):
     col = DatabaseManager.get_collection("logSources")
     api_key = f"src_{secrets.token_hex(16)}"
@@ -53,10 +62,21 @@ async def create_or_rotate_source(
         {"$set": doc},
         upsert=True
     )
+    
+    actor = current_user.get("username", "admin")
+    await audit_service.log_event(
+        action="LOG_SOURCE_CONFIGURED",
+        actor=actor,
+        role=current_user.get("role", "admin"),
+        entity_type="logSource",
+        entity_id=payload.name,
+        details={"name": payload.name, "description": payload.description}
+    )
+    
     return {"message": "Log source configured", "sourceId": payload.name, "apiKey": api_key}
 
 @router.get("/rules")
-async def list_detection_rules(current_user: dict = Depends(get_current_user)):
+async def list_detection_rules(current_user: dict = Depends(require_roles([UserRole.APPROVER]))):
     col = DatabaseManager.get_collection("detectionRules")
     rules = await col.find({}).to_list(100)
     for r in rules:
@@ -68,17 +88,28 @@ async def list_detection_rules(current_user: dict = Depends(get_current_user)):
 async def update_rule(
     rule_id: str,
     update: RuleUpdate,
-    current_user: dict = Depends(require_roles([UserRole.ADMIN]))
+    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
 ):
     col = DatabaseManager.get_collection("detectionRules")
     up_dict = {k: v for k, v in update.model_dump().items() if v is not None}
     if not up_dict:
         return {"updated": False}
     res = await col.update_one({"_id": rule_id}, {"$set": up_dict})
+    
+    actor = current_user.get("username", "admin")
+    await audit_service.log_event(
+        action="DETECTION_RULE_UPDATED",
+        actor=actor,
+        role=current_user.get("role", "admin"),
+        entity_type="detectionRule",
+        entity_id=rule_id,
+        details=up_dict
+    )
+    
     return {"updated": True, "ruleId": rule_id}
 
 @router.get("/settings")
-async def get_system_settings(current_user: dict = Depends(require_roles([UserRole.ADMIN]))):
+async def get_system_settings(current_user: dict = Depends(require_roles([UserRole.APPROVER]))):
     return {
         "llm_provider": settings.LLM_PROVIDER,
         "openai_model": settings.OPENAI_MODEL,
@@ -88,65 +119,45 @@ async def get_system_settings(current_user: dict = Depends(require_roles([UserRo
         "demo_app_url": settings.DEMO_APP_URL
     }
 
+from app.services.analytics import analytics_service
+
 @router.get("/dashboard/stats")
-async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
-    inc_col = DatabaseManager.get_collection("incidents")
-    logs_col = DatabaseManager.get_collection("logEvents")
-    tkt_col = DatabaseManager.get_collection("tickets")
-    appr_col = DatabaseManager.get_collection("actionApprovals")
-    fb_col = DatabaseManager.get_collection("feedback")
-
-    all_incidents = await inc_col.find({}).to_list(1000)
-    total_logs = await logs_col.count_documents({})
-    total_tickets = await tkt_col.count_documents({})
-    pending_approvals = await appr_col.count_documents({"status": "pending"})
-
-    # Status distribution
-    status_counts = {}
-    severity_counts = {}
-    for inc in all_incidents:
-        st = inc.get("status", "unknown")
-        sev = inc.get("severity", "unknown")
-        status_counts[st] = status_counts.get(st, 0) + 1
-        severity_counts[sev] = severity_counts.get(sev, 0) + 1
-
-    # Feedback stats
-    feedbacks = await fb_col.find({}).to_list(200)
-    useful_count = sum(1 for f in feedbacks if f.get("isUseful") is True)
-    total_feedback = len(feedbacks)
-    feedback_rate = (useful_count / total_feedback * 100) if total_feedback > 0 else 100.0
-
-    return {
-        "totalIncidents": len(all_incidents),
-        "totalLogs": total_logs,
-        "totalTickets": total_tickets,
-        "pendingApprovals": pending_approvals,
-        "statusDistribution": status_counts,
-        "severityDistribution": severity_counts,
-        "feedbackSummary": {
-            "totalFeedbacks": total_feedback,
-            "usefulCount": useful_count,
-            "satisfactionRate": round(feedback_rate, 1)
-        }
-    }
+async def get_dashboard_stats(
+    time_range: str = "24h",
+    service: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    return await analytics_service.get_dashboard_analytics(time_range=time_range, service=service)
 
 @router.post("/retention/cleanup")
 async def trigger_retention_cleanup(
     days: int = 30,
-    current_user: dict = Depends(require_roles([UserRole.ADMIN]))
+    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
 ):
     from datetime import timedelta
     cutoff = datetime.now(timezone.utc) - timedelta(days=days)
     logs_col = DatabaseManager.get_collection("logEvents")
     res = await logs_col.delete_many({"timestamp": {"$lt": cutoff}})
+    deleted_cnt = getattr(res, "deleted_count", res) if res is not None else 0
+    
+    actor = current_user.get("username", "admin")
+    await audit_service.log_event(
+        action="RETENTION_CLEANUP_EXECUTED",
+        actor=actor,
+        role=current_user.get("role", "admin"),
+        entity_type="system",
+        entity_id="retentionPolicy",
+        details={"days": days, "deletedCount": deleted_cnt, "cutoff": cutoff.isoformat()}
+    )
+    
     return {
         "message": f"Pruned logs older than {days} days",
         "cutoff": cutoff.isoformat(),
-        "deletedCount": res.deleted_count
+        "deletedCount": deleted_cnt
     }
 
 @router.get("/demo/status")
-async def get_demo_status(current_user: dict = Depends(get_current_user)):
+async def get_demo_status(current_user: dict = Depends(require_roles([UserRole.APPROVER]))):
     url = f"{settings.DEMO_APP_URL.rstrip('/')}/health"
     try:
         async with httpx.AsyncClient(timeout=4.0) as client:
@@ -159,12 +170,24 @@ class DemoFaultPayload(BaseModel):
     faultType: str
 
 @router.post("/demo/inject-fault")
-async def trigger_demo_fault(payload: DemoFaultPayload, current_user: dict = Depends(get_current_user)):
+async def trigger_demo_fault(
+    payload: DemoFaultPayload,
+    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
+):
     url = f"{settings.DEMO_APP_URL.rstrip('/')}/faults/{payload.faultType}"
     try:
         async with httpx.AsyncClient(timeout=6.0) as client:
             resp = await client.post(url)
             if resp.status_code == 200:
+                actor = current_user.get("username", "admin")
+                await audit_service.log_event(
+                    action="DEMO_FAULT_INJECTED",
+                    actor=actor,
+                    role=current_user.get("role", "admin"),
+                    entity_type="demoApp",
+                    entity_id=payload.faultType,
+                    details={"faultType": payload.faultType}
+                )
                 return resp.json()
             raise HTTPException(status_code=resp.status_code, detail=resp.text)
     except HTTPException:
@@ -173,12 +196,21 @@ async def trigger_demo_fault(payload: DemoFaultPayload, current_user: dict = Dep
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e))
 
 @router.post("/demo/reset-fault")
-async def reset_demo_fault(current_user: dict = Depends(get_current_user)):
+async def reset_demo_fault(current_user: dict = Depends(require_roles([UserRole.APPROVER]))):
     url = f"{settings.DEMO_APP_URL.rstrip('/')}/admin/reset-fault"
     try:
         async with httpx.AsyncClient(timeout=6.0) as client:
             resp = await client.post(url)
             if resp.status_code == 200:
+                actor = current_user.get("username", "admin")
+                await audit_service.log_event(
+                    action="DEMO_FAULT_RESET",
+                    actor=actor,
+                    role=current_user.get("role", "admin"),
+                    entity_type="demoApp",
+                    entity_id="all",
+                    details={"status": "fault_cleared"}
+                )
                 return resp.json()
             raise HTTPException(status_code=resp.status_code, detail=resp.text)
     except HTTPException:

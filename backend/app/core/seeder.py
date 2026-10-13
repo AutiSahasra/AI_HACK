@@ -7,8 +7,22 @@ from app.core.database import DatabaseManager
 
 logger = logging.getLogger(__name__)
 
+async def migrate_admin_accounts():
+    try:
+        users_col = DatabaseManager.get_collection("users")
+        res = await users_col.update_many({"role": "admin"}, {"$set": {"role": "approver"}})
+        if res.modified_count > 0:
+            logger.info(f"Migrated {res.modified_count} legacy admin users to approver role.")
+        
+        actions_col = DatabaseManager.get_collection("remediationActions")
+        await actions_col.update_many({"allowedRoles": "admin"}, {"$addToSet": {"allowedRoles": "approver"}})
+        await actions_col.update_many({}, {"$pull": {"allowedRoles": "admin"}})
+    except Exception as e:
+        logger.warning(f"Admin account migration notice: {e}")
+
 async def seed_all_data():
     logger.info("Initializing database seeds...")
+    await migrate_admin_accounts()
     await seed_users()
     await seed_detection_rules()
     await seed_runbooks()
@@ -22,7 +36,7 @@ async def seed_users():
             "username": "admin",
             "email": "admin@example.com",
             "password": "adminpassword123",
-            "role": UserRole.ADMIN,
+            "role": UserRole.APPROVER,
             "full_name": "System Administrator",
         },
         {
@@ -46,6 +60,10 @@ async def seed_users():
         if not existing:
             await user_repo.create(UserCreate(**u))
             logger.info(f"Seeded user: {u['username']} ({u['role'].value})")
+        elif existing.get("role") == "admin":
+            users_col = DatabaseManager.get_collection("users")
+            await users_col.update_one({"_id": existing["_id"]}, {"$set": {"role": "approver"}})
+            logger.info(f"Migrated existing user {u['username']} to approver role.")
 
 async def seed_detection_rules():
     col = DatabaseManager.get_collection("detectionRules")
@@ -218,7 +236,7 @@ async def seed_remediation_actions():
             "description": "Restarts the target demo microservice container and clears hung connections.",
             "riskLevel": "medium",
             "requiresApproval": True,
-            "allowedRoles": ["approver", "admin"],
+            "allowedRoles": ["approver"],
             "parametersSchema": {"type": "object", "properties": {"service": {"type": "string"}}},
             "executorKey": "restart_demo_service",
             "associatedHealthCheck": "/health",
@@ -231,7 +249,7 @@ async def seed_remediation_actions():
             "description": "Flushes internal in-memory cache to release heap memory.",
             "riskLevel": "low",
             "requiresApproval": False,
-            "allowedRoles": ["support_engineer", "approver", "admin"],
+            "allowedRoles": ["support_engineer", "approver"],
             "parametersSchema": {"type": "object", "properties": {}},
             "executorKey": "clear_demo_cache",
             "associatedHealthCheck": "/health",
@@ -244,7 +262,7 @@ async def seed_remediation_actions():
             "description": "Rolls back faulty deployment environment variables to prior stable configuration.",
             "riskLevel": "high",
             "requiresApproval": True,
-            "allowedRoles": ["approver", "admin"],
+            "allowedRoles": ["approver"],
             "parametersSchema": {"type": "object", "properties": {}},
             "executorKey": "rollback_demo_config",
             "associatedHealthCheck": "/health",

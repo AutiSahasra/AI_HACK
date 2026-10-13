@@ -4,6 +4,7 @@ import { User } from './types';
 import { getStoredUser, clearToken } from './api/client';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import {
   Login,
   Dashboard,
@@ -15,7 +16,8 @@ import {
   Approvals,
   AuditLog,
   Knowledge,
-  AdminSettings
+  AdminSettings,
+  Forbidden,
 } from './pages';
 
 export const App: React.FC = () => {
@@ -44,10 +46,35 @@ export const App: React.FC = () => {
               <Route path="/incidents" element={<Incidents />} />
               <Route path="/incidents/:id" element={<IncidentDetail />} />
               <Route path="/tickets" element={<Tickets />} />
-              <Route path="/approvals" element={<Approvals />} />
-              <Route path="/audit" element={<AuditLog />} />
+              
+              {/* Role Protected Routes */}
+              <Route
+                path="/approvals"
+                element={
+                  <ProtectedRoute userRole={user.role} allowedRoles={['approver', 'admin']}>
+                    <Approvals />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/audit"
+                element={
+                  <ProtectedRoute userRole={user.role} allowedRoles={['approver', 'admin']}>
+                    <AuditLog />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/knowledge" element={<Knowledge />} />
-              <Route path="/admin" element={<AdminSettings />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute userRole={user.role} allowedRoles={['admin']}>
+                    <AdminSettings />
+                  </ProtectedRoute>
+                }
+              />
+              
+              <Route path="/forbidden" element={<Forbidden userRole={user.role} />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
