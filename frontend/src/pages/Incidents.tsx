@@ -126,7 +126,7 @@ export const Incidents: React.FC = () => {
         {incidents.length === 0 ? (
           <div className="glass-panel" style={{ textAlign: 'center', padding: '48px', color: 'var(--text-dim)' }}>
             <Layers size={36} style={{ marginBottom: '12px', opacity: 0.5 }} />
-            <div style={{ fontSize: '16px', fontWeight: 600, color: '#fff' }}>No Active Incidents Found</div>
+            <div style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-main)' }}>No Active Incidents Found</div>
             <p style={{ fontSize: '13px', marginTop: '4px' }}>
               Upload error logs in CSV/JSON/LOG formats to observe automated correlation.
             </p>
@@ -147,14 +147,14 @@ export const Incidents: React.FC = () => {
                   textDecoration: 'none',
                   color: 'inherit',
                   transition: 'all 0.2s',
-                  borderLeft: inc.isRepeated ? '4px solid #f43f5e' : '4px solid var(--accent-cyan)'
+                  borderLeft: inc.isRepeated ? '4px solid #ef4444' : '4px solid var(--accent-blue)'
                 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '80%' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     {getSeverityBadge(inc.severity)}
                     {getStatusBadge(inc.status)}
-                    <span style={{ fontWeight: 700, color: 'var(--accent-cyan)', fontSize: '14px' }}>
+                    <span style={{ fontWeight: 700, color: 'var(--accent-blue)', fontSize: '14px' }}>
                       {inc.service}
                     </span>
                     {inc.isRepeated && (
@@ -164,7 +164,7 @@ export const Incidents: React.FC = () => {
                     )}
                   </div>
 
-                  <h3 style={{ fontSize: '16px', margin: 0 }}>
+                  <h3 style={{ fontSize: '16px', margin: 0, color: 'var(--text-main)' }}>
                     {inc.title}
                   </h3>
 

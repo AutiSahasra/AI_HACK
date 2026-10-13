@@ -70,6 +70,18 @@ class GroupingService:
                 )
 
                 if resolved_incident:
+                    resolved_at = resolved_incident.get("resolvedAt") or resolved_incident.get("updatedAt")
+                    if resolved_at:
+                        if isinstance(resolved_at, str):
+                            try:
+                                resolved_at = datetime.fromisoformat(resolved_at.replace("Z", "+00:00"))
+                            except Exception:
+                                resolved_at = None
+                    # If log event was timestamped before resolution (buffered in-flight log), do not falsely escalate
+                    if resolved_at and last_seen <= resolved_at + timedelta(seconds=5):
+                        logger.info(f"Ignoring buffered pre-resolution log event for resolved incident {resolved_incident['_id']}")
+                        continue
+
                     incident_id = str(resolved_incident["_id"])
                     await incident_repo.update(
                         incident_id=incident_id,

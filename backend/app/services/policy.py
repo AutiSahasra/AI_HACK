@@ -78,17 +78,22 @@ class PolicyService:
 
         # 2. Role authorization check
         allowed_roles = action.get("allowedRoles", [])
+        is_approved_by_manager = (
+            approval_doc.get("status") == ApprovalStatus.APPROVED.value
+            and bool(approval_doc.get("approvedBy"))
+        )
         if executor_role not in allowed_roles and executor_role != "admin":
-            raise PolicyViolationError(
-                f"Role '{executor_role}' is not authorized to execute action '{action_name}'. Allowed: {allowed_roles}"
-            )
+            if not (executor_role == "support_engineer" and is_approved_by_manager):
+                raise PolicyViolationError(
+                    f"Role '{executor_role}' is not authorized to execute action '{action_name}'. Senior Manager approval required first."
+                )
 
         # 3. Check if action requires approval
         if action.get("requiresApproval", True):
             # 4. Check approval state
             if approval_doc.get("status") != ApprovalStatus.APPROVED.value:
                 raise PolicyViolationError(
-                    f"Execution blocked: Action '{action_name}' requires approval, but approval status is '{approval_doc.get('status')}'"
+                    f"Execution blocked: Action '{action_name}' requires Senior Manager approval first. Current status is '{approval_doc.get('status')}'."
                 )
 
             # 5. Check expiry

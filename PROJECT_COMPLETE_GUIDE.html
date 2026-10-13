@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Root Cause Analysis & Intelligent Ticket Resolution Copilot - Executive Architecture & Workflow Guide</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #64748b;
+      --primary: #0f172a;
+      --accent-blue: #0284c7;
+      --accent-green: #16a34a;
+      --accent-amber: #d97706;
+      --accent-rose: #e11d48;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .header {
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 28px;
+      margin-bottom: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .title-group h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .title-group p {
+      font-size: 15px;
+      color: var(--text-muted);
+    }
+
+    .print-btn {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: all 0.2s;
+    }
+
+    .print-btn:hover {
+      background: #1e293b;
+      transform: translateY(-1px);
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-top: 36px;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--primary);
+      padding-left: 12px;
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-top: 24px;
+      margin-bottom: 10px;
+    }
+
+    p, li {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    ul, ol {
+      padding-left: 24px;
+      margin-bottom: 16px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .callout {
+      background: #f1f5f9;
+      border-left: 4px solid var(--accent-blue);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+
+    .workflow-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .workflow-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .step-number {
+      background: var(--primary);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .step-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .tech-pill {
+      display: inline-block;
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-right: 6px;
+      margin-top: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+    }
+
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    td {
+      color: var(--text-muted);
+    }
+
+    pre, code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 14px 0;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-rose { background: #fee2e2; color: #991b1b; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+    .badge-amber { background: #fef3c7; color: #92400e; }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .container { border: none; box-shadow: none; padding: 0; }
+      .print-btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title-group">
+        <h1>AI Root Cause Analysis & Ticket Resolution Copilot</h1>
+        <p>Enterprise Architectural Blueprint, Technology Stack & End-to-End Operational Workflow</p>
+      </div>
+      <button class="print-btn" onclick="window.print()">📥 Print / Save as PDF</button>
+    </div>
+
+    <div class="callout">
+      <strong>Executive Brief:</strong> An autonomous site reliability copilot that ingests streaming microservice logs, eliminates alert fatigue via deterministic template fingerprinting, retrieves historical runbooks, performs grounded root cause analysis, and enforces dual-gated human approvals before executing safe auto-remediations.
+    </div>
+
+    <h2>1. End-to-End Operational Workflow (Step-by-Step)</h2>
+    <p>The platform executes an 11-step pipeline designed to safeguard production systems from cascading outages while eliminating manual log investigation overhead:</p>
+
+    <!-- Step 1 -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number">1</span>
+        <span class="step-title">Log Emission & Real-Time Fault Generation</span>
+      </div>
+      <p>Simulated production microservices (orders, checkout, payment gateway, inventory) process requests and emit live logs. Faults such as database pool exhaustion, memory spikes, or gateway timeouts are generated under live simulated traffic.</p>
+      <div>
+        <span class="tech-pill">Python 3.13</span>
+        <span class="tech-pill">FastAPI</span>
+        <span class="tech-pill">Uvicorn (Port 8001)</span>
+        <span class="tech-pill">Rotating File Loggers</span>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number">2</span>
+        <span class="step-title">Collector Daemon & Non-Blocking Streaming</span>
+      </div>
+      <p>A background daemon tails active application log files, buffers new lines, detects multi-line stack trace boundaries, and forwards structured batches to the central ingestion API with API key credentials.</p>
+      <div>
+        <span class="tech-pill">collector/tailer.py</span>
+        <span class="tech-pill">HTTPX Async Client</span>
+        <span class="tech-pill">X-API-Key Auth</span>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number">3</span>
+        <span class="step-title">Multi-Format Ingestion & Multi-Line Stack Trace Stacking</span>
+      </div>
+      <p>Accepts streaming batches (<code>/api/ingest</code>) and manual file uploads (<code>/api/uploads</code>) across CSV, JSON, NDJSON/JSONL, Syslog, and raw logs. Automatically reassembles multi-line Java / Python tracebacks into single logical events.</p>
+      <div>
+        <span class="tech-pill">FastAPI Async Handlers</span>
+        <span class="tech-pill">Multi-Line Regex Accumulator</span>
+        <span class="tech-pill">ISO 8601 Timestamp Normalizer</span>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number">4</span>
+        <span class="step-title">Schema Normalization & Sensitive Data Redaction</span>
+      </div>
+      <p>Maps all incoming data to a strict <code>LogEvent</code> schema. Automatically masks passwords, API credentials, bearer tokens, credit cards, and PII before database storage or LLM prompt injection.</p>
+      <div>
+        <span class="tech-pill">Pydantic v2 Models</span>
+        <span class="tech-pill">Cryptographic Redaction Service</span>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number">5</span>
+        <span class="step-title">Deterministic Template Fingerprinting</span>
+      </div>
+      <p>Extracts variable tokens (IDs, timestamps, IP addresses) from raw error messages to isolate the syntactic error template. Hashes this template to generate an immutable fingerprint (e.g., <code>ERR_CONN_POOL_TIMEOUT</code>).</p>
+      <div>
+        <span class="tech-pill">Template Extraction Regex</span>
+        <span class="tech-pill">SHA-256 Hashing</span>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number">6</span>
+        <span class="step-title">Anomaly Detection & Incident Deduplication</span>
+      </div>
+      <p>Evaluates detection rules and rolling Z-score error-rate statistics. Groups matching errors by <code>(service, fingerprint, temporal_window)</code> into a single <code>Incident</code>, reducing 500 duplicate alerts into 1 actionable ticket.</p>
+      <div>
+        <span class="tech-pill">Rolling Z-Score Anomaly Detector</span>
+        <span class="tech-pill">MongoDB Compound Indices</span>
+      </div>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number">7</span>
+        <span class="step-title">Historical Runbook Retrieval & Grounded AI RCA</span>
+      </div>
+      <p>Searches past resolved incidents and approved runbooks. Synthesizes a grounded Root Cause Analysis strictly separating <strong>Observed Facts</strong> (verifiable citations from actual logs) from <strong>AI Inferences</strong> with anti-hallucination validation.</p>
+      <div>
+        <span class="tech-pill">Anthropic / OpenAI / Free HF API / Mock</span>
+        <span class="tech-pill">Pydantic JSON Schema Enforcer</span>
+        <span class="tech-pill">Citation Grounding Validator</span>
+      </div>
+    </div>
+
+    <!-- Step 8 -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number">8</span>
+        <span class="step-title">Automated Ticketing & Priority Classification</span>
+      </div>
+      <p>Generates or links a ticket with priorities P1 through P4 based on error severity, volume, and service criticality. Displays real-time status on the Support Engineer Kanban / Table view.</p>
+      <div>
+        <span class="tech-pill">MongoDB tickets Collection</span>
+        <span class="tech-pill">P1-P4 SLA Priority Classifier</span>
+      </div>
+    </div>
+
+    <!-- Step 9 -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number">9</span>
+        <span class="step-title">Dual-Gated Governance & Role-Based Approval</span>
+      </div>
+      <p>Support Engineers pick safe fixes from an allow-listed catalog. High-risk remediations (e.g., service restarts or config rollbacks) trigger a formal approval request sent to the Senior Manager's Approvals Queue.</p>
+      <div>
+        <span class="tech-pill">PyJWT Authentication</span>
+        <span class="tech-pill">Role-Based Access Control (RBAC)</span>
+        <span class="tech-pill">Approvals Queue</span>
+      </div>
+    </div>
+
+    <!-- Step 10 -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number">10</span>
+        <span class="step-title">Safe Action Execution + Automated Recovery Health Check</span>
+      </div>
+      <p>Executes the approved remediation via secure microservice admin endpoints. Before marking the incident resolved, the platform probes <code>GET /health</code> and monitors for a 5-second log error quiet period.</p>
+      <div>
+        <span class="tech-pill">Allow-listed Action Executor</span>
+        <span class="tech-pill">Automated Health Probe Poller</span>
+        <span class="tech-pill">Log Error Quiet Period Monitor</span>
+      </div>
+    </div>
+
+    <!-- Step 11 -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number">11</span>
+        <span class="step-title">Immutable Audit Trail & Executive Dashboard</span>
+      </div>
+      <p>Records every action, approval, rejection, and state transition to an append-only audit database. Renders KPI analytics (MTTR, failure-prone services, uptime, error trends) on the Paolo-styled React UI.</p>
+      <div>
+        <span class="tech-pill">MongoDB audit_logs (Append-only)</span>
+        <span class="tech-pill">React 18 + Paolo Clean Design System</span>
+      </div>
+    </div>
+
+    <h2>2. Technology Stack Matrix</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Component</th>
+          <th>Technology</th>
+          <th>Key Responsibility</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="3"><strong>Frontend</strong></td>
+          <td>Application Core</td>
+          <td>React 18 + Vite 5 + TypeScript</td>
+          <td>Type-safe, fast rendering single-page application</td>
+        </tr>
+        <tr>
+          <td>Design & Styling</td>
+          <td>Vanilla CSS (Paolo Tokens)</td>
+          <td>Clean off-white canvas, elevated white cards, charcoal typography</td>
+        </tr>
+        <tr>
+          <td>Icons & Routing</td>
+          <td>Lucide React + React Router v6</td>
+          <td>Modern icons, protected route guards with role inspection</td>
+        </tr>
+        <tr>
+          <td rowspan="4"><strong>Backend</strong></td>
+          <td>Web Framework</td>
+          <td>FastAPI (Python 3.13) + Uvicorn</td>
+          <td>High-throughput asynchronous REST API</td>
+        </tr>
+        <tr>
+          <td>Data Validation</td>
+          <td>Pydantic v2</td>
+          <td>Strict request/response parsing and LLM schema enforcement</td>
+        </tr>
+        <tr>
+          <td>Database Driver</td>
+          <td>Motor (Async MongoDB driver)</td>
+          <td>Non-blocking queries, compound indexes, text search</td>
+        </tr>
+        <tr>
+          <td>Security & Auth</td>
+          <td>PyJWT + bcrypt</td>
+          <td>Token-based authentication and role-based permissions</td>
+        </tr>
+        <tr>
+          <td><strong>Streaming</strong></td>
+          <td>Log Tailer</td>
+          <td>Python tailer daemon + HTTPX</td>
+          <td>Live log tailing, multi-line detection, resilient batch forwarding</td>
+        </tr>
+        <tr>
+          <td><strong>Microservice</strong></td>
+          <td>Demo App</td>
+          <td>FastAPI + Rotating Loggers</td>
+          <td>Simulates real-world traffic, failure scenarios, and admin fixes</td>
+        </tr>
+        <tr>
+          <td><strong>Caching</strong></td>
+          <td>Transient Store</td>
+          <td>Redis</td>
+          <td>Analysis result caching (< 2ms) and real-time log event streams</td>
+        </tr>
+        <tr>
+          <td><strong>Embeddings</strong></td>
+          <td>Vector Model</td>
+          <td>all-MiniLM-L6-v2 (384-dim)</td>
+          <td>Dense vector encoding, cosine semantic search over runbooks</td>
+        </tr>
+        <tr>
+          <td><strong>ML Classifier</strong></td>
+          <td>Gradient Boosting</td>
+          <td>XGBoost (xgb.XGBClassifier)</td>
+          <td>Incident category classification on 7 structured telemetry metrics</td>
+        </tr>
+        <tr>
+          <td><strong>AI Copilot (RAG)</strong></td>
+          <td>Inference Engine</td>
+          <td>Anthropic / OpenAI / HF / Mock</td>
+          <td>Grounded root cause analysis, fact verification, runbook matching</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3. Deep Dive: How Redis, MiniLM, XGBoost & RAG are Used</h2>
+
+    <!-- Redis -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number" style="background:#dc2626;">R</span>
+        <span class="step-title">Redis (Operational Caching & Event Streaming)</span>
+      </div>
+      <p><strong>Primary Function:</strong> Sub-millisecond transient caching and live event queueing (<code>backend/app/services/redis_service.py</code>).</p>
+      <ul>
+        <li><strong>Deterministic Feature Cache Keys:</strong> Generates cache keys based on a SHA-256 fingerprint of normalized telemetry metrics + model version (e.g., <code>rca:cache:{fp_16}:{model_version}:v1:v1</code>).</li>
+        <li><strong>Instant Response Time:</strong> Repeated calls for the same incident return in <code>&lt; 2ms</code> with <code>cache_hit: true</code>, protecting the ML pipeline from redundant load.</li>
+        <li><strong>TTL Expiration:</strong> Automatically expires cached analyses after 300 seconds (5 minutes) to ensure freshness when new logs arrive.</li>
+        <li><strong>Redis Streams (<code>XADD</code> / <code>XREVRANGE</code>):</strong> Buffers live incoming log events (<code>stream:log_events</code>) for decoupled asynchronous background workers.</li>
+        <li><strong>Zero Secret Leakage & Fallback:</strong> Strips all auth tokens and passwords before serialization. Transparently falls back to an in-memory dictionary queue if Redis is offline.</li>
+      </ul>
+      <div>
+        <span class="tech-pill">redis-py</span>
+        <span class="tech-pill">TTL 300s</span>
+        <span class="tech-pill">Redis Streams (XADD)</span>
+        <span class="tech-pill">In-Memory Failover</span>
+      </div>
+    </div>
+
+    <!-- MiniLM -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number" style="background:#2563eb;">M</span>
+        <span class="step-title">MiniLM (384-Dimensional Semantic Search & Embeddings)</span>
+      </div>
+      <p><strong>Primary Function:</strong> Dense semantic embedding model (<code>sentence-transformers/all-MiniLM-L6-v2</code>) enabling intelligent search across runbooks and resolutions (<code>backend/app/services/minilm_service.py</code>).</p>
+      <ul>
+        <li><strong>384-Dimensional Dense Vectors:</strong> Encodes incident summaries and runbook knowledge articles into unit-normalized ($L2 = 1.0$) 384-dimensional floating-point vectors.</li>
+        <li><strong>Cosine Similarity Retrieval:</strong> Measures semantic proximity against pre-indexed knowledge base articles:
+          <code>Cosine Similarity = (u · v) / (||u|| * ||v||)</code></li>
+        <li><strong>Vocabulary-Independent Matching:</strong> Successfully links queries like <em>"connection pool exhausted"</em> to runbooks titled <em>"PostgreSQL query lock contention and pool starvation"</em> even without exact keyword overlap.</li>
+        <li><strong>Offline Deterministic Projection:</strong> Built with a deterministic 1024-bucket subword bigram projection matrix ($1024 \times 384$) ensuring instant vector generation even when offline without downloading multi-gigabyte models.</li>
+      </ul>
+      <div>
+        <span class="tech-pill">sentence-transformers/all-MiniLM-L6-v2</span>
+        <span class="tech-pill">384 Dimensions</span>
+        <span class="tech-pill">Cosine Similarity</span>
+        <span class="tech-pill">Subword Bigram Projection</span>
+      </div>
+    </div>
+
+    <!-- XGBoost -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number" style="background:#059669;">X</span>
+        <span class="step-title">XGBoost (Structured Metrics Incident Classifier)</span>
+      </div>
+      <p><strong>Primary Function:</strong> Gradient Boosted Decision Tree (<code>xgb.XGBClassifier</code>) predicting the underlying failure category from 7 telemetry metrics (<code>backend/app/services/xgboost_service.py</code>).</p>
+      <ul>
+        <li><strong>Fixed Ordered Features (7 Metrics):</strong> <code>cpu_usage_pct</code>, <code>memory_usage_pct</code>, <code>error_count_1m</code>, <code>db_timeout_count_1m</code>, <code>response_time_ms</code>, <code>network_error_count_1m</code>, and <code>connection_pool_usage_pct</code>.</li>
+        <li><strong>Native Missing Value Handling:</strong> Missing telemetry points are retained as <code>NaN</code> instead of arbitrarily substituting 0, letting XGBoost find optimal default branch splits.</li>
+        <li><strong>Multi-Class Softmax Probabilities:</strong> Predicts across 7 categories (<code>database</code>, <code>network</code>, <code>compute</code>, <code>memory</code>, <code>authentication</code>, <code>dependency</code>, <code>unknown</code>) with class probability confidence distributions (e.g. Database: 89.2%).</li>
+        <li><strong>Full Model Lifecycle:</strong> Trains via <code>POST /api/ml/xgboost/train</code>, evaluates Macro-F1 score, saves artifact to <code>ml_artifacts/xgboost_category_model.json</code>, and registers in MongoDB <code>model_registry</code>.</li>
+        <li><strong>Deterministic Rule Fallback:</strong> If the model has not yet been trained, a heuristic baseline automatically routes predictions to prevent downtime.</li>
+      </ul>
+      <div>
+        <span class="tech-pill">xgboost 3.4+</span>
+        <span class="tech-pill">multi:softprob</span>
+        <span class="tech-pill">7 Telemetry Features</span>
+        <span class="tech-pill">model_registry</span>
+      </div>
+    </div>
+
+    <!-- RAG -->
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <span class="step-number" style="background:#7c3aed;">RAG</span>
+        <span class="step-title">RAG (Retrieval-Augmented Generation & Anti-Hallucination)</span>
+      </div>
+      <p><strong>Primary Function:</strong> Grounds AI Root Cause Analysis in real verified evidence, eliminating hallucinations (<code>backend/app/services/rca.py</code>).</p>
+      <ul>
+        <li><strong>Retrieval Phase:</strong> Retrieves top-k matching historical incidents, approved runbooks, and actual ingested error logs and stack traces (redacting any credentials or PII).</li>
+        <li><strong>Augmentation Phase:</strong> Injects the retrieved historical context, runbooks, and log excerpts directly into the LLM system prompt with strict grounding instructions: <em>"Every cited supportingEvidence excerpt MUST be an exact verbatim substring from the provided log stream."</em></li>
+        <li><strong>Generation Phase:</strong> Invokes the LLM (Claude, OpenAI, Hugging Face, or Mock) enforcing strict Pydantic <code>RCAResult</code> schemas, strictly separating <strong>Observed Facts</strong> (provable statements from logs) from <strong>AI Inferences</strong> (hypotheses).</li>
+        <li><strong>Anti-Hallucination Evidence Validation:</strong> Post-processes the LLM output: if any cited evidence excerpt cannot be found as an exact substring in the actual ingested logs, the backend automatically prunes it before saving to the database.</li>
+      </ul>
+      <div>
+        <span class="tech-pill">Retrieval-Augmented Generation</span>
+        <span class="tech-pill">Anti-Hallucination Pruning</span>
+        <span class="tech-pill">Facts vs Inferences Separation</span>
+        <span class="tech-pill">Pydantic RCAResult</span>
+      </div>
+    </div>
+
+    <h2>4. Role-Based Access Control (RBAC) Permissions</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th>Viewer</th>
+          <th>Support Engineer</th>
+          <th>Senior Manager (Approver)</th>
+          <th>Admin</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>View KPI Dashboard & Incidents</td>
+          <td><span class="badge badge-green">Yes</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Upload Manual Log Files</td>
+          <td><span class="badge badge-rose">No</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Request High-Risk Remediation</td>
+          <td><span class="badge badge-rose">No</span></td>
+          <td><span class="badge badge-amber">Sends Request</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Approve / Reject Action Requests</td>
+          <td><span class="badge badge-rose">No</span></td>
+          <td><span class="badge badge-rose">No</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Execute Approved Fixes</td>
+          <td><span class="badge badge-rose">No</span></td>
+          <td><span class="badge badge-green">Yes (Post-Approval)</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Configure Detection Rules & Sources</td>
+          <td><span class="badge badge-rose">No</span></td>
+          <td><span class="badge badge-rose">No</span></td>
+          <td><span class="badge badge-rose">No</span></td>
+          <td><span class="badge badge-green">Yes</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Quick Start & Demonstration</h2>
+    <p>To run the entire ecosystem locally with one command:</p>
+    <pre><code># In PowerShell (root directory):
+.\start-local.ps1</code></pre>
+    <p>This simultaneously spins up:</p>
+    <ul>
+      <li><strong>Frontend UI</strong>: <code>http://localhost:5173</code></li>
+      <li><strong>Backend API</strong>: <code>http://localhost:8000</code></li>
+      <li><strong>Demo Microservice</strong>: <code>http://localhost:8001</code></li>
+      <li><strong>Log Tailer Daemon</strong>: Monitoring <code>demo-app/app.log</code></li>
+    </ul>
+
+    <h3>Standard Demonstration Logins</h3>
+    <ul>
+      <li><strong>Support Engineer</strong>: <code>supporter@acme.corp</code> / <code>Password123!</code></li>
+      <li><strong>Senior Manager</strong>: <code>approver@acme.corp</code> / <code>Password123!</code></li>
+      <li><strong>Administrator</strong>: <code>admin@acme.corp</code> / <code>Password123!</code></li>
+    </ul>
+
+    <p style="text-align: center; margin-top: 40px; color: var(--text-dim); font-size: 12px;">
+      Generated for AI Root Cause Analysis & Intelligent Ticket Resolution Copilot • Confidential & Proprietary
+    </p>
+  </div>
+</body>
+</html>

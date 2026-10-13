@@ -36,12 +36,11 @@ export const Forbidden: React.FC<ForbiddenProps> = ({
       <div style={{
         maxWidth: '560px',
         width: '100%',
-        background: 'rgba(22, 29, 49, 0.75)',
-        border: '1px solid rgba(244, 63, 94, 0.3)',
+        background: '#ffffff',
+        border: '1px solid var(--border-subtle)',
         borderRadius: '16px',
         padding: '36px 32px',
-        boxShadow: '0 12px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(244, 63, 94, 0.15)',
-        backdropFilter: 'blur(16px)',
+        boxShadow: 'var(--shadow-card)',
         position: 'relative',
         overflow: 'hidden',
       }}>
@@ -59,13 +58,13 @@ export const Forbidden: React.FC<ForbiddenProps> = ({
           width: '64px',
           height: '64px',
           borderRadius: '16px',
-          background: 'rgba(244, 63, 94, 0.12)',
-          border: '1px solid rgba(244, 63, 94, 0.25)',
+          background: '#fff1f2',
+          border: '1px solid #fecdd3',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           margin: '0 auto 20px',
-          color: 'var(--accent-rose)',
+          color: '#e11d48',
         }}>
           <ShieldAlert size={34} />
         </div>
@@ -74,8 +73,9 @@ export const Forbidden: React.FC<ForbiddenProps> = ({
           display: 'inline-flex',
           alignItems: 'center',
           gap: '6px',
-          background: 'rgba(244, 63, 94, 0.15)',
-          color: '#fda4af',
+          background: '#fff1f2',
+          border: '1px solid #fecdd3',
+          color: '#be123c',
           fontSize: '11px',
           fontWeight: 700,
           textTransform: 'uppercase',
@@ -99,7 +99,7 @@ export const Forbidden: React.FC<ForbiddenProps> = ({
 
         {/* Role breakdown info card */}
         <div style={{
-          background: 'rgba(16, 21, 36, 0.7)',
+          background: '#f8fafc',
           border: '1px solid var(--border-subtle)',
           borderRadius: '10px',
           padding: '16px',
@@ -115,8 +115,9 @@ export const Forbidden: React.FC<ForbiddenProps> = ({
               <Info size={14} /> Your Current Role:
             </span>
             <span style={{
-              background: 'rgba(56, 189, 248, 0.15)',
-              color: 'var(--accent-cyan)',
+              background: '#e0f2fe',
+              color: '#0369a1',
+              border: '1px solid #bae6fd',
               padding: '2px 8px',
               borderRadius: '6px',
               fontWeight: 600,
@@ -138,26 +139,18 @@ export const Forbidden: React.FC<ForbiddenProps> = ({
           </div>
 
           <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '8px', color: 'var(--text-dim)', fontSize: '12px' }}>
-            Path: <code style={{ color: '#f8fafc', background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px' }}>{currentPath}</code>
+            Path: <code style={{ color: '#0f172a', background: '#e2e8f0', padding: '2px 6px', borderRadius: '4px' }}>{currentPath}</code>
           </div>
         </div>
 
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
           <button
             onClick={() => navigate('/')}
+            className="btn btn-primary"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '10px 18px',
-              borderRadius: '8px',
-              background: 'var(--grad-primary)',
-              border: 'none',
-              color: '#fff',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'opacity 0.2s',
             }}
           >
             <LayoutDashboard size={16} />
@@ -166,18 +159,11 @@ export const Forbidden: React.FC<ForbiddenProps> = ({
           
           <button
             onClick={() => navigate(-1)}
+            className="btn btn-secondary"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '10px 18px',
-              borderRadius: '8px',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid var(--border-subtle)',
-              color: 'var(--text-muted)',
-              fontSize: '14px',
-              fontWeight: 500,
-              cursor: 'pointer',
             }}
           >
             <ArrowLeft size={16} />

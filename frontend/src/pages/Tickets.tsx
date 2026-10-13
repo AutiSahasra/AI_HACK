@@ -45,9 +45,9 @@ const STATUS_CONFIG: Record<TicketStatus, StatusConfig> = {
   open: {
     label: 'Open',
     badgeClass: 'badge-status-open',
-    color: '#60a5fa', // Blue
-    bg: 'rgba(59, 130, 246, 0.16)',
-    border: 'rgba(59, 130, 246, 0.45)',
+    color: '#0369a1', // Blue
+    bg: '#e0f2fe',
+    border: '#bae6fd',
     icon: <CircleDot size={12} />,
     description: 'Ticket is open and awaiting triage, assignment, and root cause investigation.',
     displayStatusText: 'Currently Open',
@@ -55,9 +55,9 @@ const STATUS_CONFIG: Record<TicketStatus, StatusConfig> = {
   in_progress: {
     label: 'In Progress',
     badgeClass: 'badge-status-in-progress',
-    color: '#fb923c', // Orange
-    bg: 'rgba(249, 115, 22, 0.16)',
-    border: 'rgba(249, 115, 22, 0.45)',
+    color: '#c2410c', // Orange
+    bg: '#ffedd5',
+    border: '#fed7aa',
     icon: <PlayCircle size={12} />,
     description: 'Active root-cause investigation and remediation preparation underway.',
     displayStatusText: 'Currently In Progress',
@@ -65,9 +65,9 @@ const STATUS_CONFIG: Record<TicketStatus, StatusConfig> = {
   pending_approval: {
     label: 'Pending Approval',
     badgeClass: 'badge-status-pending-approval',
-    color: '#c084fc', // Purple / Amber
-    bg: 'rgba(168, 85, 247, 0.16)',
-    border: 'rgba(168, 85, 247, 0.45)',
+    color: '#7e22ce', // Purple
+    bg: '#f3e8ff',
+    border: '#e9d5ff',
     icon: <ShieldAlert size={12} />,
     description: 'Remediation request submitted. Awaiting dual-authorization decision from Senior Approver.',
     displayStatusText: 'Pending Approval',
@@ -75,9 +75,9 @@ const STATUS_CONFIG: Record<TicketStatus, StatusConfig> = {
   verifying: {
     label: 'Verifying',
     badgeClass: 'badge-status-verifying',
-    color: '#38bdf8', // Cyan
-    bg: 'rgba(56, 189, 248, 0.16)',
-    border: 'rgba(56, 189, 248, 0.45)',
+    color: '#4338ca', // Indigo
+    bg: '#e0e7ff',
+    border: '#c7d2fe',
     icon: <RefreshCw size={12} className="animate-spin" />,
     description: 'Post-remediation automated health checks are confirming recovery of target service.',
     displayStatusText: 'Currently Verifying Recovery',
@@ -85,9 +85,9 @@ const STATUS_CONFIG: Record<TicketStatus, StatusConfig> = {
   resolved: {
     label: 'Resolved',
     badgeClass: 'badge-status-resolved',
-    color: '#34d399', // Green
-    bg: 'rgba(16, 185, 129, 0.16)',
-    border: 'rgba(16, 185, 129, 0.45)',
+    color: '#15803d', // Green
+    bg: '#dcfce7',
+    border: '#bbf7d0',
     icon: <CheckCircle2 size={12} />,
     description: 'Remediation executed and verified. The operational issue has been resolved.',
     displayStatusText: 'Currently Resolved',
@@ -95,9 +95,9 @@ const STATUS_CONFIG: Record<TicketStatus, StatusConfig> = {
   closed: {
     label: 'Closed',
     badgeClass: 'badge-status-closed',
-    color: '#94a3b8', // Neutral gray
-    bg: 'rgba(148, 163, 184, 0.14)',
-    border: 'rgba(148, 163, 184, 0.35)',
+    color: '#475569', // Neutral slate
+    bg: '#f1f5f9',
+    border: '#e2e8f0',
     icon: <CheckCheck size={12} />,
     description: 'Ticket lifecycle concluded. Archived in append-only system audit log.',
     displayStatusText: 'Currently Closed',
@@ -105,9 +105,9 @@ const STATUS_CONFIG: Record<TicketStatus, StatusConfig> = {
   escalated: {
     label: 'Escalated',
     badgeClass: 'badge-status-escalated',
-    color: '#fb7185', // Crimson
-    bg: 'rgba(244, 63, 94, 0.16)',
-    border: 'rgba(244, 63, 94, 0.45)',
+    color: '#b91c1c', // Crimson
+    bg: '#fee2e2',
+    border: '#fecaca',
     icon: <AlertTriangle size={12} />,
     description: 'Incident escalated due to failed health recovery verification, policy conflict, or severe outage.',
     displayStatusText: 'Currently Escalated',
@@ -115,9 +115,9 @@ const STATUS_CONFIG: Record<TicketStatus, StatusConfig> = {
   reopened: {
     label: 'Reopened',
     badgeClass: 'badge-status-reopened',
-    color: '#e879f9', // Violet
-    bg: 'rgba(217, 70, 239, 0.16)',
-    border: 'rgba(217, 70, 239, 0.45)',
+    color: '#a21caf', // Magenta
+    bg: '#fae8ff',
+    border: '#f5d0fe',
     icon: <RotateCcw size={12} />,
     description: 'Ticket reopened due to recurrence of symptoms or secondary anomalies.',
     displayStatusText: 'Currently Reopened',
@@ -534,7 +534,7 @@ export const Tickets: React.FC = () => {
       {/* Top Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '4px', color: '#fff' }}>
+          <h2 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '4px', color: 'var(--text-main)' }}>
             Incident Tickets & Resolution Board
           </h2>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
@@ -563,15 +563,15 @@ export const Tickets: React.FC = () => {
           style={{
             padding: '12px 16px',
             cursor: 'pointer',
-            border: filter === 'active' ? '1px solid var(--accent-cyan)' : '1px solid var(--border-subtle)',
-            background: filter === 'active' ? 'rgba(56, 189, 248, 0.12)' : 'var(--bg-card)',
+            border: filter === 'active' ? '1px solid #0f172a' : '1px solid var(--border-subtle)',
+            background: filter === 'active' ? '#f1f5f9' : '#ffffff',
             transition: 'all 0.15s',
           }}
         >
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
             Active Tickets
           </div>
-          <div style={{ fontSize: '22px', fontWeight: 700, color: '#38bdf8', marginTop: '2px' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#0284c7', marginTop: '2px' }}>
             {activeCount}
           </div>
           <div style={{ fontSize: '10px', color: 'var(--text-dim)' }}>Excludes Resolved/Closed</div>
@@ -583,15 +583,15 @@ export const Tickets: React.FC = () => {
           style={{
             padding: '12px 16px',
             cursor: 'pointer',
-            border: filter === 'open' ? '1px solid rgba(59, 130, 246, 0.6)' : '1px solid var(--border-subtle)',
-            background: filter === 'open' ? 'rgba(59, 130, 246, 0.12)' : 'var(--bg-card)',
+            border: filter === 'open' ? '1px solid #0f172a' : '1px solid var(--border-subtle)',
+            background: filter === 'open' ? '#f1f5f9' : '#ffffff',
             transition: 'all 0.15s',
           }}
         >
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
             Open
           </div>
-          <div style={{ fontSize: '22px', fontWeight: 700, color: '#60a5fa', marginTop: '2px' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#2563eb', marginTop: '2px' }}>
             {openCount}
           </div>
           <div style={{ fontSize: '10px', color: 'var(--text-dim)' }}>Awaiting triage</div>
@@ -603,15 +603,15 @@ export const Tickets: React.FC = () => {
           style={{
             padding: '12px 16px',
             cursor: 'pointer',
-            border: filter === 'in_progress' ? '1px solid rgba(249, 115, 22, 0.6)' : '1px solid var(--border-subtle)',
-            background: filter === 'in_progress' ? 'rgba(249, 115, 22, 0.12)' : 'var(--bg-card)',
+            border: filter === 'in_progress' ? '1px solid #0f172a' : '1px solid var(--border-subtle)',
+            background: filter === 'in_progress' ? '#f1f5f9' : '#ffffff',
             transition: 'all 0.15s',
           }}
         >
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
             In Progress
           </div>
-          <div style={{ fontSize: '22px', fontWeight: 700, color: '#fb923c', marginTop: '2px' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#ea580c', marginTop: '2px' }}>
             {inProgressCount}
           </div>
           <div style={{ fontSize: '10px', color: 'var(--text-dim)' }}>Active investigation</div>
@@ -623,15 +623,15 @@ export const Tickets: React.FC = () => {
           style={{
             padding: '12px 16px',
             cursor: 'pointer',
-            border: filter === 'pending_approval' ? '1px solid rgba(168, 85, 247, 0.6)' : '1px solid var(--border-subtle)',
-            background: filter === 'pending_approval' ? 'rgba(168, 85, 247, 0.12)' : 'var(--bg-card)',
+            border: filter === 'pending_approval' ? '1px solid #0f172a' : '1px solid var(--border-subtle)',
+            background: filter === 'pending_approval' ? '#f1f5f9' : '#ffffff',
             transition: 'all 0.15s',
           }}
         >
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
             Pending Approval
           </div>
-          <div style={{ fontSize: '22px', fontWeight: 700, color: '#c084fc', marginTop: '2px' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#7c3aed', marginTop: '2px' }}>
             {pendingApprovalCount}
           </div>
           <div style={{ fontSize: '10px', color: 'var(--text-dim)' }}>Awaiting Senior Approver</div>
@@ -643,15 +643,15 @@ export const Tickets: React.FC = () => {
           style={{
             padding: '12px 16px',
             cursor: 'pointer',
-            border: filter === 'resolved' ? '1px solid rgba(16, 185, 129, 0.6)' : '1px solid var(--border-subtle)',
-            background: filter === 'resolved' ? 'rgba(16, 185, 129, 0.12)' : 'var(--bg-card)',
+            border: filter === 'resolved' ? '1px solid #0f172a' : '1px solid var(--border-subtle)',
+            background: filter === 'resolved' ? '#f1f5f9' : '#ffffff',
             transition: 'all 0.15s',
           }}
         >
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
             Resolved
           </div>
-          <div style={{ fontSize: '22px', fontWeight: 700, color: '#34d399', marginTop: '2px' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#16a34a', marginTop: '2px' }}>
             {resolvedCount}
           </div>
           <div style={{ fontSize: '10px', color: 'var(--text-dim)' }}>Remediation verified</div>
@@ -663,15 +663,15 @@ export const Tickets: React.FC = () => {
           style={{
             padding: '12px 16px',
             cursor: 'pointer',
-            border: filter === 'closed' ? '1px solid rgba(148, 163, 184, 0.6)' : '1px solid var(--border-subtle)',
-            background: filter === 'closed' ? 'rgba(148, 163, 184, 0.12)' : 'var(--bg-card)',
+            border: filter === 'closed' ? '1px solid #0f172a' : '1px solid var(--border-subtle)',
+            background: filter === 'closed' ? '#f1f5f9' : '#ffffff',
             transition: 'all 0.15s',
           }}
         >
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
             Closed
           </div>
-          <div style={{ fontSize: '22px', fontWeight: 700, color: '#94a3b8', marginTop: '2px' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: '#64748b', marginTop: '2px' }}>
             {closedCount}
           </div>
           <div style={{ fontSize: '10px', color: 'var(--text-dim)' }}>Archived in history</div>
@@ -683,15 +683,15 @@ export const Tickets: React.FC = () => {
           style={{
             padding: '12px 16px',
             cursor: 'pointer',
-            border: filter === 'all' ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid var(--border-subtle)',
-            background: filter === 'all' ? 'rgba(255, 255, 255, 0.08)' : 'var(--bg-card)',
+            border: filter === 'all' ? '1px solid #0f172a' : '1px solid var(--border-subtle)',
+            background: filter === 'all' ? '#f1f5f9' : '#ffffff',
             transition: 'all 0.15s',
           }}
         >
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
             All Tickets
           </div>
-          <div style={{ fontSize: '22px', fontWeight: 700, color: '#fff', marginTop: '2px' }}>
+          <div style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-main)', marginTop: '2px' }}>
             {totalCount}
           </div>
           <div style={{ fontSize: '10px', color: 'var(--text-dim)' }}>Total recorded</div>
@@ -778,7 +778,7 @@ export const Tickets: React.FC = () => {
                 }}
               >
                 <TicketCheck size={32} style={{ opacity: 0.3, marginBottom: '8px' }} />
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>No tickets found</div>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>No tickets found</div>
                 <div style={{ fontSize: '12px', marginTop: '4px' }}>
                   {filter === 'active'
                     ? 'All tickets are currently resolved or closed.'
@@ -799,14 +799,14 @@ export const Tickets: React.FC = () => {
                     }}
                     style={{
                       padding: '14px 18px',
-                      background: isSelected ? 'rgba(56, 189, 248, 0.09)' : 'var(--bg-secondary)',
+                      background: isSelected ? '#f1f5f9' : '#ffffff',
                       border: isSelected
-                        ? '1px solid var(--border-accent)'
+                        ? '1px solid #0f172a'
                         : '1px solid var(--border-subtle)',
                       borderRadius: '8px',
                       cursor: 'pointer',
                       transition: 'all 0.15s',
-                      boxShadow: isSelected ? '0 4px 20px rgba(0, 0, 0, 0.4)' : 'none',
+                      boxShadow: isSelected ? '0 2px 8px rgba(0, 0, 0, 0.06)' : 'none',
                     }}
                   >
                     {/* Top Row: Ticket ID + Priority Badge + Prominent Status Badge */}
@@ -825,7 +825,7 @@ export const Tickets: React.FC = () => {
                             fontFamily: 'var(--font-mono)',
                             fontWeight: 700,
                             fontSize: '13px',
-                            color: 'var(--accent-cyan)',
+                            color: 'var(--accent-blue)',
                           }}
                         >
                           {t.id}
@@ -846,7 +846,7 @@ export const Tickets: React.FC = () => {
                       style={{
                         fontSize: '14px',
                         fontWeight: 600,
-                        color: '#fff',
+                        color: 'var(--text-main)',
                         marginBottom: '8px',
                         lineHeight: 1.4,
                       }}
@@ -914,7 +914,7 @@ export const Tickets: React.FC = () => {
                   {/* Status badge beside priority and title */}
                   {getStatusBadge(selectedTicket.status, 'md')}
                 </div>
-                <h3 style={{ fontSize: '17px', margin: 0, color: '#fff', lineHeight: 1.4 }}>
+                <h3 style={{ fontSize: '17px', margin: 0, color: 'var(--text-main)', lineHeight: 1.4 }}>
                   {selectedTicket.title}
                 </h3>
               </div>
@@ -1023,8 +1023,8 @@ export const Tickets: React.FC = () => {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Sparkles size={16} color="var(--accent-cyan)" />
-                  <span style={{ fontSize: '13px', color: '#fff' }}>
+                  <Sparkles size={16} color="var(--accent-blue)" />
+                  <span style={{ fontSize: '13px', color: 'var(--text-main)' }}>
                     Correlated Incident:{' '}
                     <strong style={{ fontFamily: 'var(--font-mono)' }}>
                       {selectedTicket.incidentId.slice(0, 12)}...
@@ -1257,11 +1257,11 @@ export const Tickets: React.FC = () => {
                         }}
                       >
                         <span>
-                          <strong style={{ color: '#fff' }}>{c.author}</strong> ({c.authorRole})
+                          <strong style={{ color: 'var(--text-main)' }}>{c.author}</strong> ({c.authorRole})
                         </span>
                         <span>{new Date(c.createdAt).toLocaleTimeString()}</span>
                       </div>
-                      <div style={{ color: '#e2e8f0', lineHeight: 1.4 }}>{c.text}</div>
+                      <div style={{ color: 'var(--text-main)', lineHeight: 1.4 }}>{c.text}</div>
                     </div>
                   ))
                 )}

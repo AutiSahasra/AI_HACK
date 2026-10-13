@@ -112,11 +112,12 @@ export const UploadLogs: React.FC = () => {
         onDrop={onDrop}
         onClick={() => fileInputRef.current?.click()}
         style={{
-          border: dragOver ? '2px dashed var(--accent-cyan)' : '2px dashed var(--border-subtle)',
+          border: dragOver ? '2px dashed #0f172a' : '2px dashed var(--border-subtle)',
           borderRadius: '16px',
           padding: '48px 24px',
           textAlign: 'center',
-          background: dragOver ? 'rgba(56, 189, 248, 0.05)' : 'rgba(16, 21, 36, 0.4)',
+          background: dragOver ? 'rgba(15, 23, 42, 0.03)' : '#ffffff',
+          boxShadow: 'var(--shadow-card)',
           cursor: 'pointer',
           transition: 'all 0.2s',
         }}
@@ -136,16 +137,17 @@ export const UploadLogs: React.FC = () => {
           width: '64px',
           height: '64px',
           borderRadius: '16px',
-          background: 'rgba(56, 189, 248, 0.1)',
+          background: '#f1f5f9',
+          border: '1px solid var(--border-subtle)',
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
           marginBottom: '16px',
-          color: 'var(--accent-cyan)'
+          color: '#0f172a'
         }}>
           <UploadCloud size={32} />
         </div>
-        <h3 style={{ fontSize: '17px', fontWeight: 600, marginBottom: '6px' }}>
+        <h3 style={{ fontSize: '17px', fontWeight: 600, marginBottom: '6px', color: 'var(--text-main)' }}>
           {uploading ? 'Parsing and normalizing log events...' : 'Drop log files here, or click to browse'}
         </h3>
         <p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '480px', margin: '0 auto' }}>
@@ -182,12 +184,12 @@ export const UploadLogs: React.FC = () => {
                       onClick={() => setSelectedUpload(u)}
                       style={{
                         cursor: 'pointer',
-                        background: selectedUpload?.id === u.id ? 'rgba(56, 189, 248, 0.08)' : undefined
+                        background: selectedUpload?.id === u.id ? '#f1f5f9' : undefined
                       }}
                     >
                       <td style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <FileText size={16} color="var(--accent-cyan)" />
-                        <span>{u.fileName}</span>
+                        <FileText size={16} color="var(--text-main)" />
+                        <span style={{ color: 'var(--text-main)' }}>{u.fileName}</span>
                       </td>
                       <td>
                         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text-muted)' }}>
@@ -196,9 +198,9 @@ export const UploadLogs: React.FC = () => {
                       </td>
                       <td>{getStatusBadge(u.status)}</td>
                       <td>
-                        <span style={{ color: '#34d399', fontWeight: 600 }}>{u.parsedCount}</span>
+                        <span style={{ color: '#16a34a', fontWeight: 600 }}>{u.parsedCount}</span>
                         {u.failedCount > 0 && (
-                          <span style={{ color: '#fb7185', fontWeight: 600, marginLeft: '6px' }}>
+                          <span style={{ color: '#e11d48', fontWeight: 600, marginLeft: '6px' }}>
                             / {u.failedCount} err
                           </span>
                         )}
@@ -218,8 +220,8 @@ export const UploadLogs: React.FC = () => {
         {selectedUpload && (
           <div className="glass-panel" style={{ padding: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <FileCheck size={18} color="var(--accent-cyan)" />
+              <h3 style={{ fontSize: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)' }}>
+                <FileCheck size={18} color="var(--text-main)" />
                 <span>Upload Breakdown: {selectedUpload.fileName}</span>
               </h3>
               <button
@@ -232,30 +234,30 @@ export const UploadLogs: React.FC = () => {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '20px' }}>
-              <div style={{ background: 'var(--bg-secondary)', padding: '12px', borderRadius: '8px' }}>
+              <div style={{ background: '#f8fafc', border: '1px solid var(--border-subtle)', padding: '12px', borderRadius: '8px' }}>
                 <div style={{ fontSize: '11px', color: 'var(--text-dim)' }}>STATUS</div>
                 <div style={{ marginTop: '4px' }}>{getStatusBadge(selectedUpload.status)}</div>
               </div>
-              <div style={{ background: 'var(--bg-secondary)', padding: '12px', borderRadius: '8px' }}>
+              <div style={{ background: '#f8fafc', border: '1px solid var(--border-subtle)', padding: '12px', borderRadius: '8px' }}>
                 <div style={{ fontSize: '11px', color: 'var(--text-dim)' }}>PARSED EVENTS</div>
-                <div style={{ fontSize: '18px', fontWeight: 700, color: '#34d399' }}>
+                <div style={{ fontSize: '18px', fontWeight: 700, color: '#16a34a' }}>
                   {selectedUpload.parsedCount}
                 </div>
               </div>
-              <div style={{ background: 'var(--bg-secondary)', padding: '12px', borderRadius: '8px' }}>
+              <div style={{ background: '#f8fafc', border: '1px solid var(--border-subtle)', padding: '12px', borderRadius: '8px' }}>
                 <div style={{ fontSize: '11px', color: 'var(--text-dim)' }}>FAILED LINES</div>
-                <div style={{ fontSize: '18px', fontWeight: 700, color: selectedUpload.failedCount > 0 ? '#fb7185' : 'var(--text-dim)' }}>
+                <div style={{ fontSize: '18px', fontWeight: 700, color: selectedUpload.failedCount > 0 ? '#e11d48' : 'var(--text-dim)' }}>
                   {selectedUpload.failedCount}
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 style={{ fontSize: '14px', marginBottom: '10px' }}>
+              <h4 style={{ fontSize: '14px', marginBottom: '10px', color: 'var(--text-main)' }}>
                 Line-by-Line Error Log ({selectedUpload.errors.length})
               </h4>
               {selectedUpload.errors.length === 0 ? (
-                <div style={{ padding: '16px', background: 'rgba(16, 185, 129, 0.08)', borderRadius: '8px', color: '#34d399', fontSize: '13px' }}>
+                <div style={{ padding: '16px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', color: '#166534', fontSize: '13px' }}>
                   All lines in this file parsed cleanly with 0 validation or syntax errors.
                 </div>
               ) : (
@@ -263,17 +265,17 @@ export const UploadLogs: React.FC = () => {
                   {selectedUpload.errors.map((err, idx) => (
                     <div key={idx} style={{
                       padding: '10px 12px',
-                      background: 'rgba(244, 63, 94, 0.08)',
-                      border: '1px solid rgba(244, 63, 94, 0.2)',
+                      background: '#fff1f2',
+                      border: '1px solid #fecdd3',
                       borderRadius: '8px',
                       fontSize: '12px'
                     }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fb7185', fontWeight: 600 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', color: '#be123c', fontWeight: 600 }}>
                         <span>Line {err.line}</span>
                         <span>{err.error}</span>
                       </div>
                       {err.raw && (
-                        <div style={{ marginTop: '4px', fontFamily: 'var(--font-mono)', color: 'var(--text-dim)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ marginTop: '4px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {err.raw}
                         </div>
                       )}

@@ -43,6 +43,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Set<Permission>> = {
     'REQUEST_REMEDIATION',
     'SEND_APPROVAL_REQUEST',
     'VIEW_MY_REQUESTS',
+    'EXECUTE_REMEDIATION',
   ]),
   approver: new Set<Permission>([
     ...COMMON_PERMISSIONS,

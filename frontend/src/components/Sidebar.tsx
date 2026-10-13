@@ -31,11 +31,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
   const getRoleTheme = (role?: UserRole) => {
     switch (role) {
       case 'approver':
-        return { label: 'Senior Approver', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' };
+        return { label: 'Senior Approver', color: '#b45309', bg: '#fef3c7' };
       case 'support_engineer':
-        return { label: 'Support Engineer (L1/L2)', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' };
+        return { label: 'Support Engineer (L1/L2)', color: '#0369a1', bg: '#e0f2fe' };
       default:
-        return { label: 'Guest / Unknown', color: '#94a3b8', bg: 'rgba(255, 255, 255, 0.05)' };
+        return { label: 'Guest / Unknown', color: '#475569', bg: '#f1f5f9' };
     }
   };
 
@@ -44,17 +44,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
   return (
     <aside style={{
       width: '240px',
-      background: 'rgba(16, 21, 36, 0.6)',
+      background: '#ffffff',
       borderRight: '1px solid var(--border-subtle)',
       display: 'flex',
       flexDirection: 'column',
-      padding: '20px 12px',
+      padding: '20px 14px',
       gap: '6px',
       justifyContent: 'space-between',
     }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-        <div style={{ padding: '0 12px 14px', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-dim)', fontWeight: 600 }}>
-          Workspace Navigation
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <div style={{ padding: '0 10px 12px', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-dim)', fontWeight: 700 }}>
+          Navigation
         </div>
         {allowedItems.map(item => {
           const Icon = item.icon;
@@ -69,13 +69,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
                 gap: '12px',
                 padding: '10px 14px',
                 borderRadius: '8px',
-                color: isActive ? '#fff' : 'var(--text-muted)',
-                background: isActive ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
-                border: isActive ? '1px solid var(--border-accent)' : '1px solid transparent',
+                color: isActive ? '#0f172a' : 'var(--text-muted)',
+                background: isActive ? '#f1f5f9' : 'transparent',
+                border: isActive ? '1px solid var(--border-subtle)' : '1px solid transparent',
                 textDecoration: 'none',
-                fontSize: '14px',
+                fontSize: '13px',
                 fontWeight: isActive ? 600 : 500,
-                transition: 'all 0.15s',
+                transition: 'all 0.15s ease-in-out',
               })}
             >
               <Icon size={18} />
@@ -85,30 +85,31 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
         })}
       </div>
 
-      {/* Role Indicator Card at Bottom */}
+      {/* Access Tier Card at Bottom (styled like Paolo Upgrade Card) */}
       <div style={{
         marginTop: 'auto',
-        padding: '12px',
-        background: 'rgba(10, 13, 20, 0.6)',
+        padding: '14px',
+        background: '#f8fafc',
         border: '1px solid var(--border-subtle)',
-        borderRadius: '8px',
-        fontSize: '11px',
+        borderRadius: '12px',
+        fontSize: '12px',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-dim)', marginBottom: '4px' }}>
-          <Shield size={12} color={roleMeta.color} />
-          <span style={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Access Tier</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-dim)', marginBottom: '8px' }}>
+          <Shield size={14} color={roleMeta.color} />
+          <span style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '11px' }}>Access Tier</span>
         </div>
         <div style={{
           color: roleMeta.color,
           fontWeight: 600,
           background: roleMeta.bg,
-          padding: '4px 8px',
-          borderRadius: '4px',
+          padding: '6px 10px',
+          borderRadius: '6px',
           display: 'flex',
           alignItems: 'center',
           gap: '6px',
+          fontSize: '12px',
         }}>
-          <Lock size={11} />
+          <Lock size={12} />
           <span>{roleMeta.label}</span>
         </div>
       </div>

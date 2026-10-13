@@ -25,8 +25,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '14px 28px',
-      background: 'rgba(16, 21, 36, 0.9)',
-      backdropFilter: 'blur(16px)',
+      background: '#ffffff',
       borderBottom: '1px solid var(--border-subtle)',
       position: 'sticky',
       top: 0,
@@ -37,17 +36,17 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
           width: '36px',
           height: '36px',
           borderRadius: '10px',
-          background: 'var(--grad-primary)',
+          background: '#0f172a',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: 'var(--glow-cyan)'
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
         }}>
           <Activity size={20} color="#fff" />
         </div>
         <div>
-          <h1 style={{ fontSize: '17px', fontWeight: 700, margin: 0, letterSpacing: '-0.01em' }}>
-            <span className="gradient-text">RootCause</span> Copilot
+          <h1 style={{ fontSize: '17px', fontWeight: 700, margin: 0, letterSpacing: '-0.01em', color: '#0f172a' }}>
+            RootCause <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>Copilot</span>
           </h1>
           <p style={{ fontSize: '11px', color: 'var(--text-dim)', margin: 0 }}>
             Incident Intelligence & Remediation Engine
@@ -63,12 +62,12 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
               alignItems: 'center',
               gap: '8px',
               padding: '6px 12px',
-              background: 'rgba(255, 255, 255, 0.03)',
+              background: '#f8fafc',
               borderRadius: '8px',
               border: '1px solid var(--border-subtle)'
             }}>
-              <UserIcon size={16} color="var(--accent-cyan)" />
-              <span style={{ fontSize: '13px', fontWeight: 500 }}>{user.full_name || user.username}</span>
+              <UserIcon size={16} color="var(--text-muted)" />
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>{user.full_name || user.username}</span>
               <span className={`badge ${getRoleBadgeClass(user.role)}`} style={{ fontSize: '11px', fontWeight: 600 }}>
                 {user.role === 'approver' ? 'Senior Approver' : 'Support L1/L2'}
               </span>

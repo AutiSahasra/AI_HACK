@@ -101,16 +101,16 @@ export const AdminSettings: React.FC = () => {
             </div>
           ) : (
             sources.map(src => (
-              <div key={src.sourceId || src.name} style={{ background: 'var(--bg-secondary)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+              <div key={src.sourceId || src.name} style={{ background: '#f8fafc', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <span style={{ fontWeight: 600, color: '#fff', fontSize: '14px' }}>{src.name}</span>
+                  <span style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '14px' }}>{src.name}</span>
                   <span className={`badge ${src.status === 'active' ? 'badge-resolved' : 'badge-info'}`}>
                     {src.status}
                   </span>
                 </div>
                 <div style={{ fontSize: '12px', color: 'var(--text-dim)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <div>Last Seen: {src.lastSeenAt ? new Date(src.lastSeenAt).toLocaleTimeString() : 'Never'}</div>
-                  <div>Total Ingested Events: <strong style={{ color: 'var(--accent-cyan)' }}>{src.eventCount || 0}</strong></div>
+                  <div>Total Ingested Events: <strong style={{ color: 'var(--text-main)' }}>{src.eventCount || 0}</strong></div>
                 </div>
               </div>
             ))
@@ -132,8 +132,8 @@ export const AdminSettings: React.FC = () => {
         </form>
 
         {generatedKey && (
-          <div style={{ marginTop: '16px', padding: '12px 16px', background: 'rgba(56, 189, 248, 0.1)', border: '1px solid var(--border-accent)', borderRadius: '8px', fontSize: '13px' }}>
-            <strong>Generated API Key:</strong> <code style={{ color: 'var(--accent-cyan)', marginLeft: '8px' }}>{generatedKey}</code>
+          <div style={{ marginTop: '16px', padding: '12px 16px', background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: '8px', fontSize: '13px' }}>
+            <strong style={{ color: 'var(--text-main)' }}>Generated API Key:</strong> <code style={{ color: '#0f172a', fontWeight: 600, marginLeft: '8px', background: '#ffffff', padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--border-subtle)' }}>{generatedKey}</code>
             <div style={{ fontSize: '11px', color: 'var(--text-dim)', marginTop: '4px' }}>
               Pass this key in the <code>X-API-Key</code> HTTP header when POSTing to <code>/api/ingest</code>.
             </div>
@@ -143,8 +143,8 @@ export const AdminSettings: React.FC = () => {
 
       {/* Detection Rules Panel */}
       <div className="glass-panel" style={{ padding: '24px' }}>
-        <h3 style={{ fontSize: '17px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <ShieldCheck size={18} color="var(--accent-cyan)" />
+        <h3 style={{ fontSize: '17px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)' }}>
+          <ShieldCheck size={18} color="var(--text-main)" />
           <span>Active Detection Rules</span>
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -154,13 +154,13 @@ export const AdminSettings: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '14px 18px',
-              background: 'var(--bg-secondary)',
+              background: '#f8fafc',
               borderRadius: '8px',
               border: '1px solid var(--border-subtle)'
             }}>
               <div style={{ maxWidth: '75%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                  <span style={{ fontWeight: 600, color: '#fff', fontSize: '14px' }}>{rule.name}</span>
+                  <span style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '14px' }}>{rule.name}</span>
                   <span className="badge badge-info" style={{ fontSize: '10px' }}>{rule.ruleType}</span>
                   <span className={`badge badge-${rule.severity?.toLowerCase()}`} style={{ fontSize: '10px' }}>{rule.severity}</span>
                 </div>

@@ -22,10 +22,10 @@ import {
 } from 'lucide-react';
 
 const RISK_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-  low:      { bg: 'rgba(16,185,129,0.10)',  border: 'rgba(16,185,129,0.35)',  text: '#34d399' },
-  medium:   { bg: 'rgba(245,158,11,0.10)',  border: 'rgba(245,158,11,0.35)',  text: '#fbbf24' },
-  high:     { bg: 'rgba(244,63,94,0.10)',   border: 'rgba(244,63,94,0.35)',   text: '#fb7185' },
-  critical: { bg: 'rgba(239,68,68,0.15)',   border: 'rgba(239,68,68,0.50)',   text: '#f87171' },
+  low:      { bg: '#dcfce7', border: '#bbf7d0', text: '#15803d' },
+  medium:   { bg: '#fef3c7', border: '#fde68a', text: '#b45309' },
+  high:     { bg: '#fee2e2', border: '#fecaca', text: '#b91c1c' },
+  critical: { bg: '#fee2e2', border: '#fca5a5', text: '#991b1b' },
 };
 function riskColor(level?: string | null) {
   return RISK_COLORS[(level || 'medium').toLowerCase()] ?? RISK_COLORS.medium;
@@ -69,8 +69,8 @@ export const Approvals: React.FC = () => {
       setActionOutput({
         status: decision === 'approved' ? 'Approved' : 'Rejected',
         message: decision === 'approved'
-          ? `Remediation action '${rec.actionName}' approved. Ready for execution and automated health verification.`
-          : `Remediation action '${rec.actionName}' rejected with rationale. Linked incident and ticket returned to active triage.`,
+          ? `Remediation action '${rec.actionName}' approved. The Support Engineer has been authorized to execute this action.`
+          : `Remediation action '${rec.actionName}' rejected with rationale. Linked incident returned to active triage.`,
         incidentId: rec.incidentId
       });
       fetchApprovals();
@@ -95,8 +95,8 @@ export const Approvals: React.FC = () => {
 
   const getStatusBadge = (s: string) => {
     switch (s) {
-      case 'pending':   return <span className="badge badge-warn"><Clock size={12} /> Pending SRE Review</span>;
-      case 'approved':  return <span className="badge badge-resolved"><CheckCircle2 size={12} /> Approved</span>;
+      case 'pending':   return <span className="badge badge-warn"><Clock size={12} /> Pending Manager Review</span>;
+      case 'approved':  return <span className="badge badge-resolved"><CheckCircle2 size={12} /> Approved (Ready for Support Execution)</span>;
       case 'rejected':  return <span className="badge badge-critical"><XCircle size={12} /> Rejected</span>;
       case 'executing': return <span className="badge badge-info"><RefreshCw size={12} className="animate-spin" /> Executing Fix</span>;
       case 'executed':  return <span className="badge badge-info"><CheckCircle2 size={12} /> Executed</span>;
@@ -167,12 +167,12 @@ export const Approvals: React.FC = () => {
 
       {/* Execution Result Banner */}
       {actionOutput && (
-        <div className="glass-panel" style={{ padding: '18px 22px', background: 'rgba(56,189,248,0.1)', border: '1px solid var(--border-accent)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div className="glass-panel" style={{ padding: '18px 22px', background: '#e0f2fe', border: '1px solid #bae6fd', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <div>
-            <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '4px' }}>
+            <div style={{ fontSize: '14px', fontWeight: 700, color: '#0369a1', marginBottom: '4px' }}>
               Execution Status: {actionOutput.status}
             </div>
-            <div style={{ fontSize: '13px', color: '#fff' }}>{actionOutput.message}</div>
+            <div style={{ fontSize: '13px', color: 'var(--text-main)' }}>{actionOutput.message}</div>
           </div>
           {actionOutput.incidentId && (
             <Link to={`/incidents/${actionOutput.incidentId}`} className="btn btn-primary" style={{ fontSize: '12px', padding: '6px 14px' }}>
@@ -265,7 +265,7 @@ export const Approvals: React.FC = () => {
           {filteredApprovals.length === 0 ? (
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-dim)' }}>
               <ShieldCheck size={36} style={{ opacity: 0.4, marginBottom: '12px' }} />
-              <div style={{ fontSize: '15px', fontWeight: 600, color: '#fff' }}>No Requests Matching Filter</div>
+              <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>No Requests Matching Filter</div>
               <p style={{ fontSize: '13px', marginTop: '4px' }}>
                 There are no remediation requests currently under the '{activeTab}' status tab.
               </p>
@@ -281,11 +281,12 @@ export const Approvals: React.FC = () => {
                 <div
                   key={approvalId}
                   style={{
-                    background: 'var(--bg-secondary)',
-                    border: `1px solid ${a.status === 'pending' ? 'rgba(245,158,11,0.25)' : 'var(--border-subtle)'}`,
+                    background: '#ffffff',
+                    border: `1px solid ${a.status === 'pending' ? '#fde68a' : 'var(--border-subtle)'}`,
                     borderRadius: '10px',
                     overflow: 'hidden',
-                    transition: 'border-color 0.2s'
+                    transition: 'border-color 0.2s',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
                   }}
                 >
                   {/* Card Header (always visible) */}
@@ -296,7 +297,7 @@ export const Approvals: React.FC = () => {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                         {isExpanded ? <ChevronDown size={16} color="var(--text-dim)" /> : <ChevronRight size={16} color="var(--text-dim)" />}
-                        <span style={{ fontWeight: 700, fontSize: '15px', color: '#fff' }}>{a.actionName}</span>
+                        <span style={{ fontWeight: 700, fontSize: '15px', color: 'var(--text-main)' }}>{a.actionName}</span>
                         {getStatusBadge(a.status)}
                         {getVerificationBadge(a)}
                         {a.riskLevel && (
@@ -308,7 +309,7 @@ export const Approvals: React.FC = () => {
                           <Link
                             to={`/incidents/${a.incidentId}`}
                             onClick={e => e.stopPropagation()}
-                            style={{ fontSize: '12px', color: 'var(--accent-cyan)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(56,189,248,0.08)', padding: '2px 8px', borderRadius: '4px' }}
+                            style={{ fontSize: '12px', color: 'var(--accent-blue)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', background: '#e0f2fe', padding: '2px 8px', borderRadius: '4px' }}
                           >
                             <span>Incident: {a.incidentId.slice(0, 8)}...</span>
                             <ExternalLink size={11} />
@@ -316,7 +317,7 @@ export const Approvals: React.FC = () => {
                         )}
                       </div>
                       <div style={{ fontSize: '12px', color: 'var(--text-dim)', lineHeight: '1.4' }}>
-                        Requested by <strong style={{ color: '#fff' }}>{a.requestedBy}</strong> ({a.requestedByRole}) at {new Date(a.createdAt).toLocaleTimeString()}
+                        Requested by <strong style={{ color: 'var(--text-main)' }}>{a.requestedBy}</strong> ({a.requestedByRole}) at {new Date(a.createdAt).toLocaleTimeString()}
                         {a.approvedBy && (
                           <span style={{ marginLeft: '8px', color: '#34d399' }}>
                             &bull; Decided by <strong>{a.approvedBy}</strong> ({a.approvedByRole})
@@ -445,9 +446,9 @@ export const Approvals: React.FC = () => {
 
       {/* Rejection Modal */}
       {rejectingApprovalId && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.78)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="glass-panel" style={{ width: '90%', maxWidth: '480px', padding: '24px', backgroundColor: '#0c1017', border: '1px solid var(--border-accent)', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.5)' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px', color: '#fff' }}>Reject Remediation Request</h3>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="glass-panel" style={{ width: '90%', maxWidth: '480px', padding: '24px', backgroundColor: '#ffffff', border: '1px solid var(--border-subtle)', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-main)' }}>Reject Remediation Request</h3>
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
               Please provide a clear reason for rejecting this remediation action. This will be recorded in the immutable audit log and reflected on the incident.
             </p>

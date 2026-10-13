@@ -220,7 +220,7 @@ export const Dashboard: React.FC = () => {
                   y1={yPos}
                   x2={width - padding.right}
                   y2={yPos}
-                  stroke="rgba(255, 255, 255, 0.08)"
+                  stroke="#e2e8f0"
                   strokeDasharray="4 4"
                 />
                 <text
@@ -290,7 +290,7 @@ export const Dashboard: React.FC = () => {
                       y1={padding.top}
                       x2={cx}
                       y2={padding.top + chartH}
-                      stroke="rgba(255, 255, 255, 0.3)"
+                      stroke="#94a3b8"
                       strokeWidth="1.5"
                       strokeDasharray="2 2"
                     />
@@ -332,9 +332,9 @@ export const Dashboard: React.FC = () => {
               top: '12px',
               left: `${Math.min(75, Math.max(15, (hoveredTrendIdx / incidentTrends.length) * 100))}%`,
               transform: 'translateX(-50%)',
-              background: 'rgba(15, 23, 42, 0.95)',
-              border: '1px solid var(--border-accent)',
-              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6)',
+              background: '#ffffff',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
               borderRadius: '8px',
               padding: '8px 12px',
               pointerEvents: 'none',
@@ -343,18 +343,18 @@ export const Dashboard: React.FC = () => {
               minWidth: '130px',
             }}
           >
-            <div style={{ color: '#fff', fontWeight: 700, marginBottom: '4px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '3px' }}>
+            <div style={{ color: 'var(--text-main)', fontWeight: 700, marginBottom: '4px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '3px' }}>
               {hoveredData.label} ({timeRange})
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#38bdf8', marginBottom: '2px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-main)', marginBottom: '2px' }}>
               <span>Total Incidents:</span>
               <strong>{hoveredData.total || 0}</strong>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fb923c', marginBottom: '2px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#ea580c', marginBottom: '2px' }}>
               <span>Critical / High:</span>
               <strong>{hoveredData.critical || 0}</strong>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#34d399' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#16a34a' }}>
               <span>Resolved:</span>
               <strong>{hoveredData.resolved || 0}</strong>
             </div>
@@ -371,7 +371,7 @@ export const Dashboard: React.FC = () => {
         className="glass-panel"
         style={{
           padding: '24px 28px',
-          background: 'radial-gradient(ellipse at 85% 20%, rgba(56, 189, 248, 0.12), transparent 70%), var(--bg-card)',
+          background: '#ffffff',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -393,7 +393,7 @@ export const Dashboard: React.FC = () => {
               </span>
             )}
           </div>
-          <h1 style={{ fontSize: '24px', fontWeight: 700, margin: '0 0 4px 0', color: '#fff' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, margin: '0 0 4px 0', color: 'var(--text-main)' }}>
             Incident Analytics Dashboard
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0, maxWidth: '680px' }}>
@@ -425,7 +425,7 @@ export const Dashboard: React.FC = () => {
           <div
             style={{
               display: 'flex',
-              background: 'rgba(255, 255, 255, 0.04)',
+              background: '#f1f5f9',
               border: '1px solid var(--border-subtle)',
               borderRadius: '8px',
               padding: '2px',
@@ -436,14 +436,14 @@ export const Dashboard: React.FC = () => {
                 key={tr}
                 onClick={() => setTimeRange(tr)}
                 style={{
-                  padding: '5px 11px',
+                  padding: '5px 12px',
                   borderRadius: '6px',
                   fontSize: '11px',
                   fontWeight: 600,
                   cursor: 'pointer',
                   border: 'none',
-                  background: timeRange === tr ? 'var(--accent-cyan)' : 'transparent',
-                  color: timeRange === tr ? '#000' : 'var(--text-muted)',
+                  background: timeRange === tr ? '#0f172a' : 'transparent',
+                  color: timeRange === tr ? '#ffffff' : 'var(--text-muted)',
                   transition: 'all 0.15s',
                 }}
               >
@@ -464,8 +464,8 @@ export const Dashboard: React.FC = () => {
       {hasPermission(userRole, 'VIEW_APPROVALS') && pendingApprovals > 0 && (
         <div
           style={{
-            background: 'linear-gradient(90deg, rgba(245, 158, 11, 0.15) 0%, rgba(168, 85, 247, 0.12) 100%)',
-            border: '1px solid rgba(245, 158, 11, 0.4)',
+            background: '#fffbeb',
+            border: '1px solid #fde68a',
             borderRadius: '10px',
             padding: '14px 20px',
             display: 'flex',
@@ -476,14 +476,14 @@ export const Dashboard: React.FC = () => {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ padding: '8px', background: 'rgba(245, 158, 11, 0.2)', borderRadius: '8px', color: '#f59e0b' }}>
+            <div style={{ padding: '8px', background: '#fef3c7', borderRadius: '8px', color: '#b45309' }}>
               <ShieldCheck size={20} />
             </div>
             <div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: '#fff' }}>
+              <div style={{ fontSize: '14px', fontWeight: 700, color: '#92400e' }}>
                 {pendingApprovals} Remediation {pendingApprovals === 1 ? 'Approval' : 'Approvals'} Awaiting Senior Authorization
               </div>
-              <div style={{ fontSize: '12px', color: '#fbbf24' }}>
+              <div style={{ fontSize: '12px', color: '#b45309' }}>
                 Dual-authorization guard active. High-risk remediations require explicit Senior Approver sign-off.
               </div>
             </div>
@@ -491,7 +491,7 @@ export const Dashboard: React.FC = () => {
           <Link
             to="/approvals"
             className="btn btn-primary"
-            style={{ fontSize: '12px', padding: '6px 14px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#000', fontWeight: 700 }}
+            style={{ fontSize: '12px', padding: '6px 14px', background: '#0f172a', color: '#ffffff', fontWeight: 700 }}
           >
             <span>Review Approvals Queue</span>
             <ArrowRight size={14} />
@@ -511,16 +511,16 @@ export const Dashboard: React.FC = () => {
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>
               Total Incidents
             </span>
-            <div style={{ padding: '7px', background: 'rgba(56, 189, 248, 0.1)', borderRadius: '7px', color: 'var(--accent-cyan)' }}>
+            <div style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)' }}>
               <AlertTriangle size={16} />
             </div>
           </div>
-          <div style={{ fontSize: '28px', fontWeight: 700, color: '#fff' }}>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: 'var(--text-main)' }}>
             {loading ? '...' : totalIncidents}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', marginTop: '4px' }}>
             {totalIncTrend !== null && totalIncTrend !== undefined ? (
-              <span style={{ color: totalIncTrend > 0 ? '#fb7185' : '#34d399', display: 'flex', alignItems: 'center', gap: '2px', fontWeight: 600 }}>
+              <span style={{ color: totalIncTrend > 0 ? '#b91c1c' : '#15803d', display: 'flex', alignItems: 'center', gap: '2px', fontWeight: 600 }}>
                 {totalIncTrend > 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                 {totalIncTrend > 0 ? `+${totalIncTrend}%` : `${totalIncTrend}%`}
               </span>
@@ -539,15 +539,15 @@ export const Dashboard: React.FC = () => {
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>
               Unresolved Tickets
             </span>
-            <div style={{ padding: '7px', background: 'rgba(168, 85, 247, 0.1)', borderRadius: '7px', color: '#c084fc' }}>
+            <div style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)' }}>
               <TicketCheck size={16} />
             </div>
           </div>
-          <div style={{ fontSize: '28px', fontWeight: 700, color: '#fff' }}>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: 'var(--text-main)' }}>
             {loading ? '...' : unresolvedTickets}
           </div>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
-            <Link to="/incidents" style={{ color: 'var(--accent-cyan)', textDecoration: 'none' }}>
+            <Link to="/incidents" style={{ color: 'var(--accent-blue)', textDecoration: 'none', fontWeight: 500 }}>
               {totalTickets > 0 ? `${unresolvedTickets} active of ${totalTickets} total →` : 'All resolved/closed'}
             </Link>
           </div>
@@ -563,16 +563,16 @@ export const Dashboard: React.FC = () => {
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>
               Critical Errors
             </span>
-            <div style={{ padding: '7px', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '7px', color: 'var(--accent-rose)' }}>
+            <div style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fee2e2', border: '1px solid #fecaca', borderRadius: '8px', color: '#b91c1c' }}>
               <Flame size={16} />
             </div>
           </div>
-          <div style={{ fontSize: '28px', fontWeight: 700, color: criticalErrors > 0 ? '#fb7185' : '#fff' }}>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: criticalErrors > 0 ? '#b91c1c' : 'var(--text-main)' }}>
             {loading ? '...' : criticalErrors}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', marginTop: '4px' }}>
             {critTrend !== null && critTrend !== undefined ? (
-              <span style={{ color: critTrend > 0 ? '#fb7185' : '#34d399', display: 'flex', alignItems: 'center', gap: '2px', fontWeight: 600 }}>
+              <span style={{ color: critTrend > 0 ? '#b91c1c' : '#15803d', display: 'flex', alignItems: 'center', gap: '2px', fontWeight: 600 }}>
                 {critTrend > 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                 {critTrend > 0 ? `+${critTrend}%` : `${critTrend}%`}
               </span>
@@ -591,11 +591,11 @@ export const Dashboard: React.FC = () => {
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>
               Mean Time to Detect
             </span>
-            <div style={{ padding: '7px', background: 'rgba(56, 189, 248, 0.1)', borderRadius: '7px', color: '#38bdf8' }}>
+            <div style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)' }}>
               <Clock size={16} />
             </div>
           </div>
-          <div style={{ fontSize: '28px', fontWeight: 700, color: '#fff' }}>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: 'var(--text-main)' }}>
             {loading ? '...' : mttd?.available ? mttd.formatted : 'N/A'}
           </div>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -613,11 +613,11 @@ export const Dashboard: React.FC = () => {
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>
               Mean Time to Resolve
             </span>
-            <div style={{ padding: '7px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '7px', color: 'var(--accent-emerald)' }}>
+            <div style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#dcfce7', border: '1px solid #bbf7d0', borderRadius: '8px', color: '#15803d' }}>
               <CheckCircle2 size={16} />
             </div>
           </div>
-          <div style={{ fontSize: '28px', fontWeight: 700, color: '#fff' }}>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: 'var(--text-main)' }}>
             {loading ? '...' : mttr?.available ? mttr.formatted : 'N/A'}
           </div>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -635,11 +635,11 @@ export const Dashboard: React.FC = () => {
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase' }}>
               Resolution Success Rate
             </span>
-            <div style={{ padding: '7px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '7px', color: '#60a5fa' }}>
+            <div style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: '8px', color: 'var(--text-main)' }}>
               <ShieldCheck size={16} />
             </div>
           </div>
-          <div style={{ fontSize: '28px', fontWeight: 700, color: successRate?.available ? '#34d399' : '#fff' }}>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: successRate?.available ? '#15803d' : 'var(--text-main)' }}>
             {loading ? '...' : successRate?.available ? `${successRate.rate}%` : 'N/A'}
           </div>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -656,7 +656,7 @@ export const Dashboard: React.FC = () => {
         <div className="glass-panel" style={{ padding: '22px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
             <div>
-              <h2 style={{ fontSize: '16px', margin: '0 0 2px 0', color: '#fff' }}>Incident Trends</h2>
+              <h2 style={{ fontSize: '16px', margin: '0 0 2px 0', color: 'var(--text-main)' }}>Incident Trends</h2>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                 Temporal distribution of incident clusters in {timeRange} window
               </div>
@@ -687,7 +687,7 @@ export const Dashboard: React.FC = () => {
         <div className="glass-panel" style={{ padding: '22px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h2 style={{ fontSize: '16px', margin: '0 0 2px 0', color: '#fff' }}>Most Failure-Prone Services</h2>
+              <h2 style={{ fontSize: '16px', margin: '0 0 2px 0', color: 'var(--text-main)' }}>Most Failure-Prone Services</h2>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                 Ranked by incident frequency & live health state
               </div>
@@ -708,7 +708,7 @@ export const Dashboard: React.FC = () => {
                   <div
                     key={svc.service}
                     style={{
-                      background: 'rgba(255, 255, 255, 0.02)',
+                      background: '#f8fafc',
                       border: '1px solid var(--border-subtle)',
                       borderRadius: '8px',
                       padding: '12px 14px',
@@ -719,8 +719,8 @@ export const Dashboard: React.FC = () => {
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Server size={14} color="var(--accent-cyan)" />
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#fff' }}>{svc.service}</span>
+                        <Server size={14} color="var(--accent-blue)" />
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>{svc.service}</span>
                       </div>
 
                       {/* Live Health Badge */}
@@ -732,22 +732,22 @@ export const Dashboard: React.FC = () => {
                           fontWeight: 600,
                           background:
                             svc.healthStatus === 'healthy'
-                              ? 'rgba(16, 185, 129, 0.15)'
+                              ? '#dcfce7'
                               : svc.healthStatus === 'degraded'
-                              ? 'rgba(245, 158, 11, 0.15)'
-                              : 'rgba(148, 163, 184, 0.15)',
+                              ? '#fef3c7'
+                              : '#f1f5f9',
                           color:
                             svc.healthStatus === 'healthy'
-                              ? '#34d399'
+                              ? '#15803d'
                               : svc.healthStatus === 'degraded'
-                              ? '#fbbf24'
-                              : '#94a3b8',
+                              ? '#b45309'
+                              : '#475569',
                           border: `1px solid ${
                             svc.healthStatus === 'healthy'
-                              ? 'rgba(16, 185, 129, 0.3)'
+                              ? '#bbf7d0'
                               : svc.healthStatus === 'degraded'
-                              ? 'rgba(245, 158, 11, 0.3)'
-                              : 'rgba(148, 163, 184, 0.3)'
+                              ? '#fde68a'
+                              : '#e2e8f0'
                           }`,
                         }}
                       >
@@ -760,17 +760,17 @@ export const Dashboard: React.FC = () => {
                     </div>
 
                     {/* Progress distribution bar */}
-                    <div style={{ width: '100%', height: '5px', background: 'rgba(255, 255, 255, 0.08)', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{ width: `${pct}%`, height: '100%', background: 'var(--grad-primary)', borderRadius: '3px' }} />
+                    <div style={{ width: '100%', height: '5px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+                      <div style={{ width: `${pct}%`, height: '100%', background: '#0f172a', borderRadius: '3px' }} />
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-dim)' }}>
                       <span>
-                        <strong style={{ color: '#fff' }}>{svc.incidentCount}</strong> {svc.incidentCount === 1 ? 'incident' : 'incidents'}
-                        {svc.criticalCount > 0 && <span style={{ color: '#fb7185' }}> ({svc.criticalCount} critical)</span>}
+                        <strong style={{ color: 'var(--text-main)' }}>{svc.incidentCount}</strong> {svc.incidentCount === 1 ? 'incident' : 'incidents'}
+                        {svc.criticalCount > 0 && <span style={{ color: '#b91c1c' }}> ({svc.criticalCount} critical)</span>}
                       </span>
                       <div style={{ display: 'flex', gap: '8px' }}>
-                        <Link to={`/incidents?service=${svc.service}`} style={{ color: 'var(--accent-cyan)', textDecoration: 'none' }}>
+                        <Link to={`/incidents?service=${svc.service}`} style={{ color: 'var(--accent-blue)', textDecoration: 'none', fontWeight: 500 }}>
                           View Incidents &rarr;
                         </Link>
                       </div>
@@ -788,7 +788,7 @@ export const Dashboard: React.FC = () => {
         {/* Severity Distribution Panel */}
         <div className="glass-panel" style={{ padding: '22px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div>
-            <h2 style={{ fontSize: '16px', margin: '0 0 2px 0', color: '#fff' }}>Incident Severity Distribution</h2>
+            <h2 style={{ fontSize: '16px', margin: '0 0 2px 0', color: 'var(--text-main)' }}>Incident Severity Distribution</h2>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Categorization by impact classification taxonomy</div>
           </div>
 
@@ -808,7 +808,7 @@ export const Dashboard: React.FC = () => {
               ) : null
             )}
             {severityBreakdown.every((s: any) => s.count === 0) && (
-              <div style={{ width: '100%', background: 'rgba(255, 255, 255, 0.08)' }} />
+              <div style={{ width: '100%', background: '#e2e8f0' }} />
             )}
           </div>
 
@@ -823,17 +823,18 @@ export const Dashboard: React.FC = () => {
                   alignItems: 'center',
                   padding: '8px 12px',
                   borderRadius: '6px',
-                  background: 'rgba(255, 255, 255, 0.02)',
+                  background: '#f8fafc',
+                  border: '1px solid var(--border-subtle)',
                   fontSize: '12px',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: s.color }} />
-                  <span style={{ color: '#fff', fontWeight: 600 }}>{s.label}</span>
+                  <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>{s.label}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <span style={{ color: 'var(--text-muted)' }}>{s.percentage}%</span>
-                  <span style={{ fontWeight: 700, color: '#fff', minWidth: '24px', textAlign: 'right' }}>{s.count}</span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-main)', minWidth: '24px', textAlign: 'right' }}>{s.count}</span>
                 </div>
               </div>
             ))}
@@ -844,9 +845,9 @@ export const Dashboard: React.FC = () => {
         <div className="glass-panel" style={{ padding: '22px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <h2 style={{ fontSize: '16px', margin: '0 0 2px 0', color: '#fff' }}>Application Availability & Service Uptime</h2>
+              <h2 style={{ fontSize: '16px', margin: '0 0 2px 0', color: 'var(--text-main)' }}>Application Availability & Service Uptime</h2>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                Target service: <strong style={{ color: 'var(--accent-cyan)' }}>{uptimeData.service || 'order-service'}</strong>
+                Target service: <strong style={{ color: 'var(--accent-blue)' }}>{uptimeData.service || 'order-service'}</strong>
               </div>
             </div>
 
@@ -857,9 +858,9 @@ export const Dashboard: React.FC = () => {
                   borderRadius: '12px',
                   fontSize: '11px',
                   fontWeight: 700,
-                  background: uptimeData.currentHealth === 'healthy' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(244, 63, 94, 0.15)',
-                  color: uptimeData.currentHealth === 'healthy' ? '#34d399' : '#fb7185',
-                  border: `1px solid ${uptimeData.currentHealth === 'healthy' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(244, 63, 94, 0.3)'}`,
+                  background: uptimeData.currentHealth === 'healthy' ? '#dcfce7' : '#fee2e2',
+                  color: uptimeData.currentHealth === 'healthy' ? '#15803d' : '#b91c1c',
+                  border: `1px solid ${uptimeData.currentHealth === 'healthy' ? '#bbf7d0' : '#fecaca'}`,
                 }}
               >
                 {uptimeData.currentHealth === 'healthy' ? 'PROBE HEALTHY' : 'PROBE DEGRADED'}
@@ -870,7 +871,7 @@ export const Dashboard: React.FC = () => {
           {uptimeData.isAvailable ? (
             <>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
-                <span style={{ fontSize: '36px', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>
+                <span style={{ fontSize: '36px', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
                   {uptimeData.availabilityPct}%
                 </span>
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
@@ -889,8 +890,8 @@ export const Dashboard: React.FC = () => {
                         flex: 1,
                         height: '24px',
                         borderRadius: '3px',
-                        background: isDegraded ? '#fb7185' : '#10b981',
-                        opacity: isDegraded ? 0.9 : 0.75 + (idx % 3) * 0.1,
+                        background: isDegraded ? '#ef4444' : '#10b981',
+                        opacity: isDegraded ? 0.9 : 0.85 + (idx % 3) * 0.05,
                       }}
                       title={isDegraded ? 'Service degraded' : 'Service healthy (200 OK)'}
                     />
@@ -899,18 +900,18 @@ export const Dashboard: React.FC = () => {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-dim)' }}>
-                <span>Healthy Duration: <strong style={{ color: '#fff' }}>{uptimeData.healthyDuration}</strong></span>
-                <span>Unhealthy Duration: <strong style={{ color: '#fb7185' }}>{uptimeData.unhealthyDuration}</strong></span>
+                <span>Healthy Duration: <strong style={{ color: 'var(--text-main)' }}>{uptimeData.healthyDuration}</strong></span>
+                <span>Unhealthy Duration: <strong style={{ color: '#b91c1c' }}>{uptimeData.unhealthyDuration}</strong></span>
               </div>
 
-              <div style={{ fontSize: '11px', color: 'var(--text-dim)', background: 'rgba(255, 255, 255, 0.02)', padding: '8px 12px', borderRadius: '6px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-dim)', background: '#f8fafc', border: '1px solid var(--border-subtle)', padding: '8px 12px', borderRadius: '6px' }}>
                 <Info size={12} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'middle' }} />
                 {uptimeData.telemetryNote}
               </div>
             </>
           ) : (
             <div style={{ padding: '36px 20px', textAlign: 'center', color: 'var(--text-dim)' }}>
-              <div style={{ fontSize: '16px', fontWeight: 600, color: '#fff', marginBottom: '6px' }}>
+              <div style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-main)', marginBottom: '6px' }}>
                 Not Available
               </div>
               <div style={{ fontSize: '12px', maxWidth: '380px', margin: '0 auto' }}>
@@ -925,7 +926,7 @@ export const Dashboard: React.FC = () => {
       <div className="glass-panel" style={{ padding: '22px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
           <div>
-            <h2 style={{ fontSize: '16px', margin: '0 0 2px 0', color: '#fff' }}>Recent Incidents</h2>
+            <h2 style={{ fontSize: '16px', margin: '0 0 2px 0', color: 'var(--text-main)' }}>Recent Incidents</h2>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
               Operational incidents requiring investigation, root-cause analysis, and safe remediation
             </div>
@@ -963,23 +964,23 @@ export const Dashboard: React.FC = () => {
                     <td>
                       <Link
                         to={`/incidents/${inc.id}`}
-                        style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent-cyan)', textDecoration: 'none' }}
+                        style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent-blue)', textDecoration: 'none' }}
                       >
                         {inc.id.slice(0, 10)}...
                       </Link>
                     </td>
-                    <td style={{ fontWeight: 600, color: '#fff' }}>
+                    <td style={{ fontWeight: 600, color: 'var(--text-main)' }}>
                       {inc.title}
                     </td>
                     <td>
-                      <span style={{ fontSize: '12px', color: '#cbd5e1' }}>{inc.service}</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{inc.service}</span>
                     </td>
                     <td>{renderSeverityBadge(inc.severity)}</td>
                     <td>{renderIncidentStatusBadge(inc.status)}</td>
                     <td style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
                       {inc.createdAt ? new Date(inc.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                     </td>
-                    <td style={{ fontSize: '12px', color: inc.assignee ? '#fff' : 'var(--text-dim)' }}>
+                    <td style={{ fontSize: '12px', color: inc.assignee ? 'var(--text-main)' : 'var(--text-dim)' }}>
                       {inc.assignee || 'Unassigned'}
                     </td>
                     <td style={{ textAlign: 'right' }}>

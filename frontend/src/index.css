@@ -2,41 +2,45 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Premium Obsidian & Cyan/Purple Palette */
-  --bg-primary: #0a0d14;
-  --bg-secondary: #101524;
-  --bg-tertiary: #161d31;
-  --bg-card: rgba(18, 24, 38, 0.7);
-  --bg-card-hover: rgba(26, 35, 56, 0.85);
+  /* Paolo Modern Light SaaS Palette */
+  --bg-primary: #f6f8fa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f4f8;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fafbfc;
 
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-accent: rgba(56, 189, 248, 0.3);
-  --border-glow: rgba(99, 102, 241, 0.4);
+  --border-subtle: #e2e8f0;
+  --border-accent: #cbd5e1;
+  --border-glow: rgba(15, 23, 42, 0.06);
 
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
+  --text-main: #0f172a;
+  --text-muted: #475569;
   --text-dim: #64748b;
 
-  --accent-cyan: #38bdf8;
-  --accent-blue: #3b82f6;
-  --accent-indigo: #6366f1;
-  --accent-purple: #a855f7;
-  --accent-emerald: #10b981;
-  --accent-amber: #f59e0b;
-  --accent-rose: #f43f5e;
+  --accent-cyan: #0284c7;
+  --accent-blue: #2563eb;
+  --accent-indigo: #4f46e5;
+  --accent-purple: #7c3aed;
+  --accent-emerald: #16a34a;
+  --accent-amber: #d97706;
+  --accent-rose: #e11d48;
+
+  /* Primary Action Colors (Crisp Black/Charcoal like Paolo) */
+  --btn-primary-bg: #0f172a;
+  --btn-primary-text: #ffffff;
 
   /* Gradients */
-  --grad-primary: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
-  --grad-accent: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
-  --grad-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 100%);
-  --grad-danger: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  --grad-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --grad-accent: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  --grad-surface: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  --grad-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   --grad-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
 
-  /* Shadows & Glass */
-  --glass-blur: blur(16px);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --glow-cyan: 0 0 24px rgba(56, 189, 248, 0.25);
-  --glow-indigo: 0 0 24px rgba(99, 102, 241, 0.25);
+  /* Shadows & Elevation */
+  --glass-blur: none;
+  --glass-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+  --glow-cyan: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --glow-indigo: 0 1px 3px rgba(15, 23, 42, 0.08);
 }
 
 * {
@@ -55,19 +59,17 @@ body {
   overflow-x: hidden;
 }
 
-/* Glassmorphism Surface */
+/* Crisp Clean Paolo Surface Cards */
 .glass-panel {
   background: var(--bg-card);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
-  border-radius: 12px;
+  border-radius: 14px;
   box-shadow: var(--glass-shadow);
   transition: all 0.2s ease-in-out;
 }
 
 .glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: var(--border-accent);
 }
 
 /* Layout Utilities */
@@ -87,16 +89,15 @@ body {
 
 /* Typography & Titles */
 h1, h2, h3, h4, h5 {
-  font-weight: 600;
-  color: #fff;
+  font-weight: 700;
+  color: var(--text-main);
   letter-spacing: -0.02em;
 }
 
 .gradient-text {
-  background: var(--grad-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-main);
   display: inline-block;
+  font-weight: 800;
 }
 
 /* Buttons */
@@ -107,136 +108,154 @@ h1, h2, h3, h4, h5 {
   gap: 8px;
   padding: 8px 16px;
   border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid transparent;
   text-decoration: none;
 }
 
 .btn-primary {
-  background: var(--grad-primary);
-  color: #fff;
-  box-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);
+  background: #0f172a;
+  color: #ffffff !important;
+  border: 1px solid #0f172a;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .btn-primary:hover {
+  background: #1e293b;
+  border-color: #1e293b;
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.45);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
 }
 
 .btn-secondary {
-  background: var(--bg-secondary);
+  background: #ffffff;
   color: var(--text-main);
   border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .btn-secondary:hover {
-  background: var(--bg-tertiary);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: #f8fafc;
+  border-color: #cbd5e1;
 }
 
 .btn-danger {
-  background: var(--grad-danger);
-  color: #fff;
+  background: #ef4444;
+  color: #ffffff !important;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
 }
 
 .btn-success {
-  background: var(--grad-success);
-  color: #fff;
+  background: #10b981;
+  color: #ffffff !important;
 }
 
-/* Badges */
+.btn-success:hover {
+  background: #059669;
+}
+
+/* High-Contrast Pastel Badges (like Paolo "Stock In" / "Stock Out") */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 3px 10px;
   border-radius: 9999px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .badge-critical, .badge-p1 {
-  background: rgba(244, 63, 94, 0.15);
-  color: #fb7185;
-  border: 1px solid rgba(244, 63, 94, 0.3);
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
 }
 
 .badge-error, .badge-p2 {
-  background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: #ffedd5;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
 }
 
 .badge-warn, .badge-p3 {
-  background: rgba(234, 179, 8, 0.15);
-  color: #fde047;
-  border: 1px solid rgba(234, 179, 8, 0.3);
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
 }
 
 .badge-info, .badge-p4 {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
 }
 
 .badge-resolved {
-  background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.badge-secondary {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
 }
 
 /* Ticket Status Badges */
 .badge-status-open {
-  background: rgba(59, 130, 246, 0.16);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.45);
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
 }
 
 .badge-status-in-progress {
-  background: rgba(249, 115, 22, 0.16);
-  color: #fb923c;
-  border: 1px solid rgba(249, 115, 22, 0.45);
+  background: #ffedd5;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
 }
 
 .badge-status-pending-approval {
-  background: rgba(168, 85, 247, 0.16);
-  color: #c084fc;
-  border: 1px solid rgba(168, 85, 247, 0.45);
+  background: #f3e8ff;
+  color: #7e22ce;
+  border: 1px solid #e9d5ff;
 }
 
 .badge-status-verifying {
-  background: rgba(56, 189, 248, 0.16);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.45);
+  background: #e0e7ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
 }
 
 .badge-status-resolved {
-  background: rgba(16, 185, 129, 0.16);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.45);
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
 }
 
 .badge-status-closed {
-  background: rgba(148, 163, 184, 0.14);
-  color: #94a3b8;
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
 }
 
 .badge-status-escalated {
-  background: rgba(244, 63, 94, 0.16);
-  color: #fb7185;
-  border: 1px solid rgba(244, 63, 94, 0.45);
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
 }
 
 .badge-status-reopened {
-  background: rgba(217, 70, 239, 0.16);
-  color: #e879f9;
-  border: 1px solid rgba(217, 70, 239, 0.45);
+  background: #fae8ff;
+  color: #a21caf;
+  border: 1px solid #f5d0fe;
 }
 
 /* Table styles */
@@ -248,53 +267,54 @@ h1, h2, h3, h4, h5 {
 
 .data-table th {
   padding: 12px 16px;
-  background: rgba(16, 21, 36, 0.8);
-  color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 600;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .data-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-subtle);
-  font-size: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 13px;
+  color: var(--text-main);
 }
 
 .data-table tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: #f8fafc;
 }
 
 /* Inputs & Form Controls */
 .input-control {
   width: 100%;
-  background: var(--bg-secondary);
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 10px 14px;
   color: var(--text-main);
-  font-size: 14px;
+  font-size: 13px;
   font-family: inherit;
   transition: all 0.2s;
 }
 
 .input-control:focus {
   outline: none;
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+  border-color: #0f172a;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.08);
 }
 
-/* Monospace Code View */
+/* Monospace Code View (High-Contrast Terminal) */
 .code-block {
   font-family: var(--font-mono);
-  font-size: 13px;
-  background: #06090e;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  background: #0f172a;
+  border: 1px solid #1e293b;
   border-radius: 8px;
-  padding: 12px;
-  color: #e2e8f0;
+  padding: 12px 14px;
+  color: #f8fafc;
   overflow-x: auto;
   line-height: 1.6;
 }
@@ -302,20 +322,20 @@ h1, h2, h3, h4, h5 {
 /* Inputs alias */
 .input-field {
   width: 100%;
-  background: var(--bg-secondary);
+  background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 10px 14px;
   color: var(--text-main);
-  font-size: 14px;
+  font-size: 13px;
   font-family: inherit;
   transition: all 0.2s;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+  border-color: #0f172a;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.08);
 }
 
 /* Animations */

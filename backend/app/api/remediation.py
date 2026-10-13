@@ -408,23 +408,31 @@ async def decide_approval(
                 }
             )
     elif new_status == ApprovalStatus.APPROVED:
-        # Notify ticket that request was approved and is pending execution
+        # Notify ticket that request was approved and awaiting Support Engineer execution
         if t_doc:
             ticket_id = str(t_doc["_id"])
             approve_comment = {
                 "id": str(uuid.uuid4())[:8],
                 "author": username,
                 "authorRole": user_role,
-                "text": f"Remediation request for '{action_name}' was APPROVED by Senior Approver @{username}. Pending execution.",
+                "text": f"Remediation request for '{action_name}' was APPROVED by Senior Manager @{username}. Support Engineer is authorized to perform this action.",
                 "createdAt": now
             }
             await ticket_col.update_one(
                 {"_id": ticket_id},
                 {
-                    "$set": {"updatedAt": now},
+                    "$set": {"status": "in_progress", "updatedAt": now},
                     "$push": {"comments": approve_comment}
                 }
             )
+
+        # Transition incident to 'approved' so Supporter dashboard highlights the action is ready to execute
+        if incident_id:
+            await incident_repo.update(incident_id, {
+                "status": "approved",
+                "approvedAction": action_name,
+                "approvedApprovalId": approval_id
+            })
 
     await audit_service.log_event(
         action=f"APPROVAL_DECISION_{new_status.value.upper()}",
@@ -432,7 +440,7 @@ async def decide_approval(
         role=user_role,
         entity_type="actionApproval",
         entity_id=approval_id,
-        details={"decision": new_status.value, "reason": updates["rejectionReason"]}
+        details={"decision": new_status.value, "reason": updates.get("rejectionReason")}
     )
 
     doc.update(updates)
@@ -442,12 +450,20 @@ async def decide_approval(
 @router.post("/execute/{approval_id}")
 async def execute_remediation(
     approval_id: str,
-    current_user: dict = Depends(require_roles([UserRole.APPROVER]))
+    current_user: dict = Depends(require_roles([UserRole.SUPPORT_ENGINEER, UserRole.APPROVER, UserRole.ADMIN]))
 ):
     col = DatabaseManager.get_collection("actionApprovals")
     approval_doc = await col.find_one({"_id": approval_id})
     if not approval_doc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Approval record not found")
+
+    # Idempotent check: if already executed or executing, return status gracefully
+    if approval_doc.get("status") in ("executed", "executing"):
+        return {
+            "status": approval_doc.get("status"),
+            "message": f"Action '{approval_doc.get('actionName')}' is already {approval_doc.get('status')}. Automated recovery verification in progress.",
+            "verified": approval_doc.get("verificationStatus") == "verified"
+        }
 
     user_role = current_user.get("role", "approver")
     username = current_user.get("username", "anonymous")

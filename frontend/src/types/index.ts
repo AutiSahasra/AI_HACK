@@ -74,6 +74,7 @@ export type IncidentStatus =
   | 'analyzing' 
   | 'analyzed' 
   | 'awaiting_approval' 
+  | 'approved'
   | 'remediating' 
   | 'verifying' 
   | 'resolved' 

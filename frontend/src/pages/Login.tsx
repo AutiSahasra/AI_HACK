@@ -41,24 +41,24 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '24px',
-      background: 'radial-gradient(ellipse at 50% 20%, rgba(56, 189, 248, 0.15), transparent 70%), var(--bg-primary)'
+      background: '#f6f8fa'
     }}>
-      <div className="glass-panel" style={{ width: '100%', maxWidth: '440px', padding: '36px' }}>
+      <div className="glass-panel" style={{ width: '100%', maxWidth: '440px', padding: '36px', background: '#ffffff', border: '1px solid var(--border-subtle)', boxShadow: '0 4px 24px rgba(0,0,0,0.04)' }}>
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <div style={{
             width: '52px',
             height: '52px',
             borderRadius: '14px',
-            background: 'var(--grad-primary)',
+            background: '#0f172a',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: '16px',
-            boxShadow: 'var(--glow-cyan)'
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
           }}>
             <Activity size={28} color="#fff" />
           </div>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '6px' }}>
+          <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-main)' }}>
             Welcome to RootCause Copilot
           </h2>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>

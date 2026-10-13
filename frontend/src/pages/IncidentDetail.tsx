@@ -23,14 +23,15 @@ import {
   AlertCircle,
   CheckCheck,
   FileText,
-  Target
+  Target,
+  Play
 } from 'lucide-react';
 
 const RISK_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-  low:      { bg: 'rgba(16,185,129,0.10)',  border: 'rgba(16,185,129,0.35)',  text: '#34d399' },
-  medium:   { bg: 'rgba(245,158,11,0.10)',  border: 'rgba(245,158,11,0.35)',  text: '#fbbf24' },
-  high:     { bg: 'rgba(244,63,94,0.10)',   border: 'rgba(244,63,94,0.35)',   text: '#fb7185' },
-  critical: { bg: 'rgba(239,68,68,0.15)',   border: 'rgba(239,68,68,0.50)',   text: '#f87171' },
+  low:      { bg: '#dcfce7', border: '#bbf7d0', text: '#15803d' },
+  medium:   { bg: '#fef3c7', border: '#fde68a', text: '#b45309' },
+  high:     { bg: '#fee2e2', border: '#fecaca', text: '#b91c1c' },
+  critical: { bg: '#fee2e2', border: '#fca5a5', text: '#991b1b' },
 };
 
 function riskColor(level: string) {
@@ -79,8 +80,27 @@ export const IncidentDetail: React.FC = () => {
   const [directJustification, setDirectJustification] = useState('');
   const [directSubmitting, setDirectSubmitting] = useState(false);
   const [directResult, setDirectResult] = useState<{ status: string; message: string; executionId?: string } | null>(null);
+  const [executingAction, setExecutingAction] = useState(false);
 
   const incidentId = incident ? (incident.id || (incident as any)._id || id || '') : '';
+
+  const handleExecuteApproved = async (approvalId: string) => {
+    if (!approvalId) return;
+    setExecutingAction(true);
+    setActionErrorMsg(null);
+    setActionSuccessMsg(null);
+    try {
+      const res = await api.executeAction(approvalId);
+      setActionSuccessMsg(
+        `Action executed! Status: ${res.status}. Automated recovery verification health checks in progress...`
+      );
+      await fetchIncidentData();
+    } catch (err: any) {
+      setActionErrorMsg(err.message || 'Failed to execute approved remediation action');
+    } finally {
+      setExecutingAction(false);
+    }
+  };
 
   const fetchIncidentData = useCallback(async () => {
     if (!id) return;
@@ -116,7 +136,7 @@ export const IncidentDetail: React.FC = () => {
 
   useEffect(() => {
     fetchIncidentData();
-    const interval = setInterval(fetchIncidentData, 6000);
+    const interval = setInterval(fetchIncidentData, 2500);
     return () => clearInterval(interval);
   }, [fetchIncidentData]);
 
@@ -229,7 +249,7 @@ export const IncidentDetail: React.FC = () => {
     );
   }
 
-  const lifecycleStages = ['new', 'analyzing', 'analyzed', 'awaiting_approval', 'remediating', 'verifying', 'resolved'];
+  const lifecycleStages = ['new', 'analyzing', 'analyzed', 'awaiting_approval', 'approved', 'remediating', 'verifying', 'resolved'];
   const isApprover = userRole === 'approver';
   const canDirectExecute = hasPermission(userRole, 'EXECUTE_REMEDIATION');
   const canSendRequest = hasPermission(userRole, 'SEND_APPROVAL_REQUEST');
@@ -237,6 +257,7 @@ export const IncidentDetail: React.FC = () => {
 
   const directIsRisky = directRec?.riskLevel === 'high' || directRec?.riskLevel === 'critical' || directAction === 'rollback_demo_config';
   const execResultFailed = directResult?.status === 'error' || directResult?.status === 'failed';
+  const approvedReq = requests.find(r => r.status === 'approved');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -305,15 +326,52 @@ export const IncidentDetail: React.FC = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <ShieldCheck size={20} color="#f59e0b" />
               <div>
-                <div style={{ fontWeight: 700, color: '#f59e0b', fontSize: '14px' }}>Remediation Request Pending SRE Approval</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>A remediation action has been requested and is awaiting review by a Senior Approver.</div>
+                <div style={{ fontWeight: 700, color: '#f59e0b', fontSize: '14px' }}>Remediation Request Pending Senior Manager Approval</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>A remediation action has been requested and directed to the Senior Manager's dashboard for approval.</div>
               </div>
             </div>
             {hasPermission(userRole, 'VIEW_APPROVALS_QUEUE') ? (
               <Link to="/approvals" className="btn btn-secondary" style={{ borderColor: '#f59e0b', color: '#f59e0b', fontSize: '12px' }}>Review in Approvals Queue</Link>
             ) : (
-              <span className="badge badge-warn" style={{ fontSize: '12px', padding: '6px 12px' }}>Awaiting Senior Approver Decision</span>
+              <span className="badge badge-warn" style={{ fontSize: '12px', padding: '6px 12px' }}>Awaiting Senior Manager Authorization</span>
             )}
+          </div>
+        )}
+
+        {/* Approved & Ready to Perform Action by Support Engineer */}
+        {(incident.status === 'approved' || approvedReq) && incident.status !== 'remediating' && incident.status !== 'verifying' && incident.status !== 'resolved' && (
+          <div style={{ marginTop: '14px', padding: '16px 20px', background: 'rgba(16,185,129,0.14)', border: '1px solid var(--accent-emerald)', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <CheckCircle2 size={24} color="#34d399" />
+              <div>
+                <div style={{ fontWeight: 700, color: '#34d399', fontSize: '15px' }}>Remediation Request Approved by Senior Manager!</div>
+                <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                  Senior Manager (@{approvedReq?.approvedBy || 'approver'}) has approved '{approvedReq?.actionName || 'remediation action'}'. As the Support Engineer, you are now authorized to perform this action.
+                </div>
+              </div>
+            </div>
+            {approvedReq && (
+              <button
+                id="btn-execute-approved"
+                onClick={() => handleExecuteApproved(approvedReq.id || (approvedReq as any)._id)}
+                disabled={executingAction}
+                className="btn btn-primary"
+                style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', boxShadow: '0 2px 10px rgba(16,185,129,0.4)', padding: '10px 20px', fontSize: '14px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
+                <Play size={16} className={executingAction ? 'animate-spin' : ''} />
+                <span>{executingAction ? 'Executing Fix...' : `Perform Action: ${approvedReq.actionName}`}</span>
+              </button>
+            )}
+          </div>
+        )}
+
+        {incident.status === 'remediating' && (
+          <div style={{ marginTop: '14px', padding: '14px 18px', background: 'rgba(56,189,248,0.12)', border: '1px solid var(--border-accent)', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <RefreshCw size={20} color="var(--accent-cyan)" className="animate-spin" />
+            <div>
+              <div style={{ fontWeight: 700, color: 'var(--accent-cyan)', fontSize: '14px' }}>Remediation Action Executing</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Remediation fix is currently executing against the service. Automated health verification will follow immediately.</div>
+            </div>
           </div>
         )}
 
@@ -354,16 +412,16 @@ export const IncidentDetail: React.FC = () => {
 
         {requests.length > 0 && (
           <div className="glass-panel" style={{ marginTop: '16px', padding: '16px 20px' }}>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: '#fff', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Remediation Request History and Status ({requests.length})
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {requests.map(req => {
                 const reqId = req.id || (req as any)._id || '';
                 return (
-                  <div key={reqId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', background: 'var(--bg-secondary)', padding: '10px 14px', borderRadius: '6px', border: '1px solid var(--border-subtle)', fontSize: '13px', gap: '12px' }}>
+                  <div key={reqId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', background: '#f8fafc', padding: '10px 14px', borderRadius: '6px', border: '1px solid var(--border-subtle)', fontSize: '13px', gap: '12px' }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <span style={{ fontWeight: 600, color: '#fff' }}>{req.actionName}</span>
+                      <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{req.actionName}</span>
                       <span style={{ color: 'var(--text-dim)', marginLeft: '10px', fontSize: '12px' }}>
                         Requested by <strong>{req.requestedBy}</strong> ({req.requestedByRole}) at {new Date(req.createdAt).toLocaleTimeString()}
                       </span>
@@ -373,9 +431,24 @@ export const IncidentDetail: React.FC = () => {
                       {req.rejectionReason && <div style={{ color: '#fb7185', fontSize: '12px', marginTop: '4px' }}>Rejection Reason: {req.rejectionReason}</div>}
                       {req.approvedBy && req.status === 'approved' && <div style={{ color: '#34d399', fontSize: '12px', marginTop: '4px' }}>Approved by: {req.approvedBy}</div>}
                     </div>
-                    <div style={{ flexShrink: 0 }}>
-                      {req.status === 'pending'  && <span className="badge badge-warn"><Clock size={11} /> Pending</span>}
-                      {req.status === 'approved' && <span className="badge badge-resolved"><CheckCircle2 size={11} /> Approved</span>}
+                    <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {req.status === 'pending'  && <span className="badge badge-warn"><Clock size={11} /> Pending Manager Review</span>}
+                      {req.status === 'approved' && (
+                        <>
+                          <span className="badge badge-resolved"><CheckCircle2 size={11} /> Approved</span>
+                          {incident.status !== 'remediating' && incident.status !== 'verifying' && incident.status !== 'resolved' && (
+                            <button
+                              onClick={() => handleExecuteApproved(reqId)}
+                              disabled={executingAction}
+                              className="btn btn-primary"
+                              style={{ padding: '4px 10px', fontSize: '12px', background: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <Play size={12} />
+                              <span>Perform Action</span>
+                            </button>
+                          )}
+                        </>
+                      )}
                       {req.status === 'rejected' && <span className="badge badge-critical"><XCircle size={11} /> Rejected</span>}
                       {req.status === 'executed' && <span className="badge badge-info"><CheckCircle2 size={11} /> Executed</span>}
                       {req.status === 'failed'   && <span className="badge badge-critical"><AlertCircle size={11} /> Failed</span>}
@@ -436,7 +509,7 @@ export const IncidentDetail: React.FC = () => {
                     Confidence: {(cause.confidence * 100).toFixed(0)}% ({cause.confidenceTier})
                   </span>
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: 600, color: '#fff', marginBottom: '8px' }}>{cause.description}</div>
+                <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', marginBottom: '8px' }}>{cause.description}</div>
                 {cause.supportingEvidence && cause.supportingEvidence.length > 0 && (
                   <div style={{ marginTop: '8px' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600, textTransform: 'uppercase' }}>Cited Log Evidence Excerpt:</div>
@@ -450,15 +523,15 @@ export const IncidentDetail: React.FC = () => {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div style={{ background: 'rgba(16,21,36,0.8)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent-blue)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <CheckCircle2 size={16} /> Observed Facts (Directly Verified in Logs)
               </div>
               <ul style={{ paddingLeft: '20px', fontSize: '13px', color: 'var(--text-main)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 {incident.observedFacts?.map((fact, i) => <li key={i}>{fact}</li>)}
               </ul>
             </div>
-            <div style={{ background: 'rgba(16,21,36,0.8)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
               <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent-purple)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Sparkles size={16} /> AI Inferences (Model Hypotheses)
               </div>
@@ -473,7 +546,7 @@ export const IncidentDetail: React.FC = () => {
       {/* Event Timeline */}
       <div className="glass-panel" style={{ padding: '24px' }}>
         <h3 style={{ fontSize: '18px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Layers size={18} color="var(--accent-cyan)" />
+          <Layers size={18} color="var(--accent-blue)" />
           <span>Related Log Events Timeline ({events.length} captured)</span>
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -484,12 +557,12 @@ export const IncidentDetail: React.FC = () => {
               const evId = ev.id || ev._id || '';
               const isExpanded = expandedEventId === evId;
               return (
-                <div key={evId} style={{ background: 'var(--bg-secondary)', borderRadius: '8px', border: '1px solid var(--border-subtle)', padding: '12px 16px', cursor: 'pointer' }} onClick={() => setExpandedEventId(isExpanded ? null : evId)}>
+                <div key={evId} style={{ background: '#ffffff', borderRadius: '8px', border: '1px solid var(--border-subtle)', padding: '12px 16px', cursor: 'pointer' }} onClick={() => setExpandedEventId(isExpanded ? null : evId)}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     {isExpanded ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
                     <span className={`badge badge-${ev.severity.toLowerCase()}`}>{ev.severity}</span>
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text-dim)' }}>{new Date(ev.timestamp).toLocaleTimeString()}</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: '#fff' }}>{ev.message.split('\n')[0]}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: 'var(--text-main)' }}>{ev.message.split('\n')[0]}</span>
                   </div>
                   {isExpanded && (
                     <div style={{ marginTop: '12px', borderTop: '1px solid var(--border-subtle)', paddingTop: '10px' }}>
@@ -519,13 +592,13 @@ export const IncidentDetail: React.FC = () => {
             </p>
 
             {topCause && (
-              <div style={{ background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.25)', borderRadius: '10px', padding: '14px 16px', marginBottom: '18px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '10px', padding: '14px 16px', marginBottom: '18px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--accent-blue)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Sparkles size={13} /> AI Root-Cause Hypothesis
                 </div>
-                <div style={{ fontSize: '14px', color: '#fff', fontWeight: 600, marginBottom: '4px' }}>{topCause.description}</div>
+                <div style={{ fontSize: '14px', color: 'var(--text-main)', fontWeight: 600, marginBottom: '4px' }}>{topCause.description}</div>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Confidence: <strong style={{ color: '#fbbf24' }}>{confidencePct(topCause.confidence)}</strong> ({topCause.confidenceTier}) -- Service: <strong style={{ color: 'var(--accent-cyan)' }}>{incident.service}</strong>
+                  Confidence: <strong style={{ color: '#b45309' }}>{confidencePct(topCause.confidence)}</strong> ({topCause.confidenceTier}) -- Service: <strong style={{ color: 'var(--accent-blue)' }}>{incident.service}</strong>
                 </div>
                 {topCause.supportingEvidence?.[0] && (
                   <div className="code-block" style={{ marginTop: '8px', fontSize: '11px' }}>{topCause.supportingEvidence[0].excerpt}</div>
@@ -544,11 +617,11 @@ export const IncidentDetail: React.FC = () => {
                       <div
                         key={i}
                         onClick={() => { setDirectAction(rec.actionName); setDirectRec(rec); }}
-                        style={{ padding: '12px 14px', borderRadius: '8px', border: `1px solid ${isSelected ? 'var(--accent-emerald)' : 'var(--border-subtle)'}`, background: isSelected ? 'rgba(16,185,129,0.08)' : 'var(--bg-secondary)', cursor: 'pointer', transition: 'all 0.18s' }}
+                        style={{ padding: '12px 14px', borderRadius: '8px', border: `1px solid ${isSelected ? '#0f172a' : 'var(--border-subtle)'}`, background: isSelected ? '#f1f5f9' : '#ffffff', cursor: 'pointer', transition: 'all 0.18s' }}
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                           <div style={{ flex: 1 }}>
-                            <div style={{ fontWeight: 600, color: '#fff', fontSize: '14px' }}>{rec.actionTitle}</div>
+                            <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '14px' }}>{rec.actionTitle}</div>
                             <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>{rec.relevanceReason}</div>
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0, marginLeft: '12px' }}>
@@ -559,7 +632,7 @@ export const IncidentDetail: React.FC = () => {
                         {rec.supportingEvidence?.[0] && (
                           <div className="code-block" style={{ marginTop: '8px', fontSize: '11px' }}>{rec.supportingEvidence[0]}</div>
                         )}
-                        <div style={{ fontSize: '12px', color: '#34d399', marginTop: '6px' }}>Expected: {rec.expectedOutcome}</div>
+                        <div style={{ fontSize: '12px', color: '#15803d', marginTop: '6px' }}>Expected: {rec.expectedOutcome}</div>
                       </div>
                     );
                   })}
@@ -568,12 +641,12 @@ export const IncidentDetail: React.FC = () => {
             )}
 
             {directResult && (
-              <div style={{ padding: '16px', borderRadius: '10px', marginBottom: '18px', background: execResultFailed ? 'rgba(244,63,94,0.12)' : 'rgba(16,185,129,0.12)', border: `1px solid ${execResultFailed ? 'var(--accent-rose)' : 'var(--accent-emerald)'}` }}>
-                <div style={{ fontWeight: 700, fontSize: '14px', marginBottom: '6px', color: execResultFailed ? '#fb7185' : '#34d399', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ padding: '16px', borderRadius: '10px', marginBottom: '18px', background: execResultFailed ? '#fee2e2' : '#dcfce7', border: `1px solid ${execResultFailed ? '#fecaca' : '#bbf7d0'}` }}>
+                <div style={{ fontWeight: 700, fontSize: '14px', marginBottom: '6px', color: execResultFailed ? '#b91c1c' : '#15803d', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {execResultFailed ? <XCircle size={16} /> : <CheckCheck size={16} />}
                   {directResult.status === 'executing_recovery_verification' ? 'Action Executed -- Verifying Recovery' : `Execution: ${directResult.status}`}
                 </div>
-                <div style={{ fontSize: '13px', color: '#fff' }}>{directResult.message}</div>
+                <div style={{ fontSize: '13px', color: 'var(--text-main)' }}>{directResult.message}</div>
                 {directResult.executionId && (
                   <div style={{ fontSize: '11px', color: 'var(--text-dim)', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>Execution ID: {directResult.executionId}</div>
                 )}
@@ -654,11 +727,11 @@ export const IncidentDetail: React.FC = () => {
                   The analysis engine reviewed this incident's log evidence, patterns, and runbook knowledge base. Select a recommendation to pre-fill the request form, or proceed manually.
                 </p>
 
-                <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '12px 16px', marginBottom: '18px', display: 'flex', gap: '20px', flexWrap: 'wrap', fontSize: '13px' }}>
-                  <div><span style={{ color: 'var(--text-dim)' }}>Incident: </span><strong style={{ color: '#fff' }}>{incident.title}</strong></div>
+                <div style={{ background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '12px 16px', marginBottom: '18px', display: 'flex', gap: '20px', flexWrap: 'wrap', fontSize: '13px' }}>
+                  <div><span style={{ color: 'var(--text-dim)' }}>Incident: </span><strong style={{ color: 'var(--text-main)' }}>{incident.title}</strong></div>
                   <div><span style={{ color: 'var(--text-dim)' }}>Severity: </span><span className={`badge badge-${incident.severity.toLowerCase()}`} style={{ fontSize: '11px' }}>{incident.severity}</span></div>
-                  <div><span style={{ color: 'var(--text-dim)' }}>Service: </span><strong style={{ color: 'var(--accent-cyan)' }}>{incident.service}</strong></div>
-                  {topCause && <div><span style={{ color: 'var(--text-dim)' }}>Top Hypothesis: </span><span style={{ color: '#fff' }}>{topCause.description.slice(0, 80)}{topCause.description.length > 80 ? '...' : ''}</span></div>}
+                  <div><span style={{ color: 'var(--text-dim)' }}>Service: </span><strong style={{ color: 'var(--accent-blue)' }}>{incident.service}</strong></div>
+                  {topCause && <div><span style={{ color: 'var(--text-dim)' }}>Top Hypothesis: </span><span style={{ color: 'var(--text-main)' }}>{topCause.description.slice(0, 80)}{topCause.description.length > 80 ? '...' : ''}</span></div>}
                 </div>
 
                 {recsLoading && (
@@ -669,16 +742,16 @@ export const IncidentDetail: React.FC = () => {
                 )}
 
                 {recsError && !recsLoading && (
-                  <div style={{ padding: '16px', background: 'rgba(244,63,94,0.10)', border: '1px solid var(--accent-rose)', borderRadius: '8px', color: '#fb7185', fontSize: '13px', marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <div style={{ padding: '16px', background: '#fee2e2', border: '1px solid #fecaca', borderRadius: '8px', color: '#b91c1c', fontSize: '13px', marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <AlertCircle size={14} />
                     {recsError} -- You can still submit a manual request below.
                   </div>
                 )}
 
                 {!recsLoading && !recsError && recommendations.length === 0 && (
-                  <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-dim)', background: 'var(--bg-secondary)', borderRadius: '8px', marginBottom: '16px' }}>
+                  <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-dim)', background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: '8px', marginBottom: '16px' }}>
                     <Info size={20} style={{ opacity: 0.5, marginBottom: '8px' }} />
-                    <div style={{ fontWeight: 600, color: '#fff' }}>Insufficient evidence for confident recommendation</div>
+                    <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>Insufficient evidence for confident recommendation</div>
                     <p style={{ fontSize: '13px', marginTop: '4px' }}>The analysis engine could not determine a specific remediation pattern for this incident. Please use the manual form.</p>
                   </div>
                 )}
@@ -688,15 +761,15 @@ export const IncidentDetail: React.FC = () => {
                     {recommendations.map((rec, i) => {
                       const rc = riskColor(rec.riskLevel);
                       return (
-                        <div key={i} style={{ background: 'var(--bg-secondary)', border: `1px solid ${i === 0 ? 'var(--border-accent)' : 'var(--border-subtle)'}`, borderRadius: '10px', padding: '16px 18px' }}>
+                        <div key={i} style={{ background: '#ffffff', border: `1px solid ${i === 0 ? '#0f172a' : 'var(--border-subtle)'}`, borderRadius: '10px', padding: '16px 18px', boxShadow: i === 0 ? '0 2px 8px rgba(0,0,0,0.06)' : 'none' }}>
                           {i === 0 && (
-                            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent-cyan)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <div style={{ fontSize: '11px', fontWeight: 700, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
                               <Target size={11} /> Best Match
                             </div>
                           )}
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', marginBottom: '8px' }}>
                             <div style={{ flex: 1 }}>
-                              <div style={{ fontWeight: 700, color: '#fff', fontSize: '15px', marginBottom: '2px' }}>{rec.actionTitle}</div>
+                              <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '15px', marginBottom: '2px' }}>{rec.actionTitle}</div>
                               <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{rec.actionName}</div>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>

@@ -29,7 +29,7 @@ export const App: React.FC = () => {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Navbar user={user} onLogout={handleLogout} />
         <div style={{ display: 'flex', flex: 1 }}>

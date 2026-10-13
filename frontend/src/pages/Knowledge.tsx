@@ -141,13 +141,13 @@ export const Knowledge: React.FC = () => {
                 {hi.summary}
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                <div style={{ background: 'var(--bg-secondary)', padding: '12px', borderRadius: '8px' }}>
+                <div style={{ background: '#f8fafc', border: '1px solid var(--border-subtle)', padding: '12px', borderRadius: '8px' }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600 }}>VERIFIED CAUSE</div>
-                  <div style={{ fontSize: '13px', color: '#fff', marginTop: '4px' }}>{hi.verifiedCause}</div>
+                  <div style={{ fontSize: '13px', color: 'var(--text-main)', marginTop: '4px' }}>{hi.verifiedCause}</div>
                 </div>
-                <div style={{ background: 'var(--bg-secondary)', padding: '12px', borderRadius: '8px' }}>
+                <div style={{ background: '#f8fafc', border: '1px solid var(--border-subtle)', padding: '12px', borderRadius: '8px' }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-dim)', fontWeight: 600 }}>REMEDIATION PERFORMED</div>
-                  <div style={{ fontSize: '13px', color: 'var(--accent-emerald)', marginTop: '4px' }}>{hi.remediationPerformed}</div>
+                  <div style={{ fontSize: '13px', color: '#15803d', marginTop: '4px' }}>{hi.remediationPerformed}</div>
                 </div>
               </div>
               {hi.logExcerpt && (

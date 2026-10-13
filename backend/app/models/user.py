@@ -7,6 +7,7 @@ class UserRole(str, Enum):
     SUPPORT_ENGINEER = "support_engineer"
     APPROVER = "approver"
     ADMIN = "admin"
+    SYSTEM = "system"
 
 class UserBase(BaseModel):
     username: str
