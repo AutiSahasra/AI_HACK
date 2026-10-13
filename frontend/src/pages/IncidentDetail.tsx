@@ -296,7 +296,7 @@ export const IncidentDetail: React.FC = () => {
 
         {incident.ticketId && (
           <div style={{ marginTop: '8px', fontSize: '13px', color: 'var(--text-dim)' }}>
-            Linked Ticket: <Link to="/tickets" style={{ color: 'var(--accent-cyan)', fontWeight: 600, textDecoration: 'none' }}>{incident.ticketId}</Link>
+            Linked Ticket: <span style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>{incident.ticketId}</span>
           </div>
         )}
 
@@ -336,7 +336,7 @@ export const IncidentDetail: React.FC = () => {
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Remediation was executed and post-action health checks confirmed healthy recovery.</div>
               </div>
             </div>
-            {incident.ticketId && <Link to="/tickets" className="btn btn-secondary" style={{ fontSize: '12px' }}>Check Ticket Status</Link>}
+            {incident.ticketId && <span className="badge badge-success" style={{ fontSize: '12px', padding: '6px 10px' }}>Ticket Closed</span>}
           </div>
         )}
 

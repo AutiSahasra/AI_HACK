@@ -70,7 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
               <UserIcon size={16} color="var(--accent-cyan)" />
               <span style={{ fontSize: '13px', fontWeight: 500 }}>{user.full_name || user.username}</span>
               <span className={`badge ${getRoleBadgeClass(user.role)}`} style={{ fontSize: '11px', fontWeight: 600 }}>
-                {user.role === 'admin' ? 'Admin' : user.role === 'approver' ? 'Senior Approver' : 'Support L1/L2'}
+                {user.role === 'approver' ? 'Senior Approver' : 'Support L1/L2'}
               </span>
             </div>
             

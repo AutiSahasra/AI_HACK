@@ -5,16 +5,12 @@ import {
   AlertTriangle, 
   FileText, 
   UploadCloud, 
-  TicketCheck, 
   ShieldCheck, 
-  ScrollText, 
-  BookOpen, 
-  Settings,
   Shield,
   Lock
 } from 'lucide-react';
 import { UserRole } from '../types';
-import { canAccessRoute, getRoleDisplayName } from '../auth/permissions';
+import { canAccessRoute } from '../auth/permissions';
 
 interface SidebarProps {
   userRole?: UserRole;
@@ -26,11 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
     { to: '/incidents', label: 'Incidents & RCA', icon: AlertTriangle },
     { to: '/logs', label: 'Log Explorer', icon: FileText },
     { to: '/upload', label: 'Upload Logs', icon: UploadCloud },
-    { to: '/tickets', label: 'Tickets', icon: TicketCheck },
     { to: '/approvals', label: 'Approvals Queue', icon: ShieldCheck },
-    { to: '/audit', label: 'Audit Trail', icon: ScrollText },
-    { to: '/knowledge', label: 'Runbooks & Past RCA', icon: BookOpen },
-    { to: '/admin', label: 'Settings & Sources', icon: Settings },
   ];
 
   // Strictly filter allowed items according to the centralized RBAC rules
@@ -38,8 +30,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ userRole }) => {
 
   const getRoleTheme = (role?: UserRole) => {
     switch (role) {
-      case 'admin':
-        return { label: 'Administrator', color: '#f43f5e', bg: 'rgba(244, 63, 94, 0.12)' };
       case 'approver':
         return { label: 'Senior Approver', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' };
       case 'support_engineer':

@@ -21,7 +21,7 @@ export const Forbidden: React.FC<ForbiddenProps> = ({
   const currentPath = location.pathname;
   const routeMeta = ROUTE_ACCESS[currentPath];
   const targetName = resourceName || routeMeta?.description || currentPath;
-  const neededRoles = requiredRoles || routeMeta?.requiredRoles || ['admin'];
+  const neededRoles = requiredRoles || routeMeta?.requiredRoles || ['approver'];
 
   return (
     <div style={{

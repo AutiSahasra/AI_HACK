@@ -57,17 +57,14 @@ export const Dashboard: React.FC = () => {
         api.getDashboardStats(timeRange, selectedService || undefined),
       ];
 
-      // Only admin is authorized to query live demo status & fault injection
-      if (userRole === 'admin') {
-        promises.push(api.getDemoStatus());
-      }
+      promises.push(api.getDemoStatus().catch(() => null));
 
       const results = await Promise.allSettled(promises);
 
       if (results[0].status === 'fulfilled') {
         setStats(results[0].value);
       }
-      if (userRole === 'admin' && results[1]?.status === 'fulfilled') {
+      if (results[1]?.status === 'fulfilled' && (results[1] as any).value) {
         setDemoStatus((results[1] as PromiseFulfilledResult<any>).value);
       }
     } catch (e) {
@@ -550,7 +547,7 @@ export const Dashboard: React.FC = () => {
             {loading ? '...' : unresolvedTickets}
           </div>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
-            <Link to="/tickets" style={{ color: 'var(--accent-cyan)', textDecoration: 'none' }}>
+            <Link to="/incidents" style={{ color: 'var(--accent-cyan)', textDecoration: 'none' }}>
               {totalTickets > 0 ? `${unresolvedTickets} active of ${totalTickets} total →` : 'All resolved/closed'}
             </Link>
           </div>
@@ -1002,93 +999,6 @@ export const Dashboard: React.FC = () => {
           </table>
         </div>
       </div>
-
-      {/* 6. ADMIN-ONLY CHAOS INJECTION & FAULT SIMULATION (Preserved existing capability) */}
-      {userRole === 'admin' && (
-        <div
-          className="glass-panel"
-          style={{
-            padding: '22px',
-            border: '1px solid rgba(244, 63, 94, 0.3)',
-            background: 'radial-gradient(ellipse at 95% 50%, rgba(244, 63, 94, 0.08), transparent 70%), var(--bg-card)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '14px',
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Flame size={18} color="var(--accent-rose)" />
-                <h2 style={{ fontSize: '16px', margin: 0, color: '#fff' }}>Chaos & Failure Injection Engine</h2>
-                <span className="badge badge-critical" style={{ fontSize: '10px' }}>ADMIN RESTRICTED</span>
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                Trigger controlled microservice failures on target demo app to test AI RCA and allow-listed remediation
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ fontSize: '12px', color: demoStatus?.active_fault ? '#fb7185' : '#34d399', fontWeight: 600 }}>
-                {demoStatus?.active_fault ? `Active Outage: ${demoStatus.active_fault}` : 'Target Service Healthy'}
-              </div>
-              {demoStatus?.active_fault && (
-                <button
-                  className="btn btn-secondary"
-                  disabled={simulating}
-                  onClick={handleResetFault}
-                  style={{ fontSize: '12px', padding: '5px 12px', color: '#34d399', borderColor: '#34d399' }}
-                >
-                  <RotateCcw size={13} />
-                  <span>Clear Fault</span>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {simMessage && (
-            <div
-              style={{
-                padding: '8px 12px',
-                borderRadius: '6px',
-                fontSize: '12px',
-                background: 'rgba(56, 189, 248, 0.1)',
-                border: '1px solid rgba(56, 189, 248, 0.3)',
-                color: 'var(--accent-cyan)',
-              }}
-            >
-              {simMessage}
-            </div>
-          )}
-
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            {[
-              { key: 'db_connection_timeout', label: 'DB Pool Timeout Spike', service: 'order-service' },
-              { key: 'memory_leak', label: 'Heap Saturation OOM', service: 'payment-service' },
-              { key: 'bad_config_deploy', label: 'Missing Env Var Deploy', service: 'inventory-service' },
-              { key: 'auth_failure_spike', label: 'Credential Anomaly Spike', service: 'auth-service' },
-              { key: 'downstream_503', label: 'Downstream 503 Outage', service: 'billing-gateway' },
-            ].map(f => (
-              <button
-                key={f.key}
-                disabled={simulating || demoStatus?.active_fault === f.key}
-                onClick={() => handleInjectFault(f.key, f.label)}
-                className="btn btn-secondary"
-                style={{
-                  fontSize: '12px',
-                  padding: '7px 13px',
-                  background: demoStatus?.active_fault === f.key ? 'rgba(244, 63, 94, 0.2)' : 'rgba(255, 255, 255, 0.03)',
-                  borderColor: demoStatus?.active_fault === f.key ? '#f43f5e' : 'var(--border-subtle)',
-                  color: demoStatus?.active_fault === f.key ? '#fb7185' : 'var(--text-main)',
-                }}
-              >
-                <Zap size={13} color={demoStatus?.active_fault === f.key ? '#fb7185' : 'var(--accent-amber)'} />
-                <span>{f.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

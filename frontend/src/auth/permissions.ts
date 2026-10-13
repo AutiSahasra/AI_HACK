@@ -53,33 +53,16 @@ export const ROLE_PERMISSIONS: Record<UserRole, Set<Permission>> = {
     'REJECT_REQUEST',
     'EXECUTE_REMEDIATION',
     'DIRECT_EXECUTE_REMEDIATION',
-    'VIEW_AUDIT',
-  ]),
-  admin: new Set<Permission>([
-    ...COMMON_PERMISSIONS,
-    'UPLOAD_LOGS',
-    'ADMIN_TICKET_OVERRIDE',
-    'REQUEST_REMEDIATION',
-    'SEND_APPROVAL_REQUEST',
-    'VIEW_MY_REQUESTS',
-    'VIEW_AUDIT',
-    'MANAGE_SOURCES',
-    'MANAGE_RULES',
-    'EXECUTE_RETENTION',
     'CHAOS_CONTROLS',
   ]),
 };
 
 export const ROUTE_ACCESS: Record<string, { requiredRoles: UserRole[]; description: string }> = {
-  '/': { requiredRoles: ['support_engineer', 'approver', 'admin'], description: 'System Dashboard' },
-  '/upload': { requiredRoles: ['support_engineer', 'admin'], description: 'Log Upload & Batch Ingestion' },
-  '/logs': { requiredRoles: ['support_engineer', 'approver', 'admin'], description: 'Log Explorer' },
-  '/incidents': { requiredRoles: ['support_engineer', 'approver', 'admin'], description: 'Incident Investigation & RCA' },
-  '/tickets': { requiredRoles: ['support_engineer', 'approver', 'admin'], description: 'Incident Tickets' },
-  '/knowledge': { requiredRoles: ['support_engineer', 'approver', 'admin'], description: 'Runbooks & Historical RCA' },
+  '/': { requiredRoles: ['support_engineer', 'approver'], description: 'System Dashboard' },
+  '/upload': { requiredRoles: ['support_engineer'], description: 'Log Upload & Batch Ingestion' },
+  '/logs': { requiredRoles: ['support_engineer', 'approver'], description: 'Log Explorer' },
+  '/incidents': { requiredRoles: ['support_engineer', 'approver'], description: 'Incident Investigation & RCA' },
   '/approvals': { requiredRoles: ['approver'], description: 'Remediation Approvals Queue' },
-  '/audit': { requiredRoles: ['approver', 'admin'], description: 'Immutable Audit Trail' },
-  '/admin': { requiredRoles: ['admin'], description: 'System Settings, Rules & Sources' },
 };
 
 export const hasPermission = (role: UserRole | undefined, permission: Permission): boolean => {
@@ -99,13 +82,11 @@ export const canAccessRoute = (role: UserRole | undefined, path: string): boolea
       return config.requiredRoles.includes(role);
     }
   }
-  return true; // Unregistered routes (or 404s) allow pass-through to React Router
+  return false; // Only explicitly permitted routes in ROUTE_ACCESS are allowed
 };
 
 export const getRoleDisplayName = (role: UserRole | undefined): string => {
   switch (role) {
-    case 'admin':
-      return 'System Administrator';
     case 'approver':
       return 'Senior Approver';
     case 'support_engineer':

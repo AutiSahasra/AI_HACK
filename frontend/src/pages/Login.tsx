@@ -8,8 +8,8 @@ interface LoginProps {
 }
 
 export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('adminpassword123');
+  const [username, setUsername] = useState('support');
+  const [password, setPassword] = useState('supportpassword123');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -132,32 +132,24 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
         <div style={{ marginTop: '28px', borderTop: '1px solid var(--border-subtle)', paddingTop: '20px' }}>
           <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginBottom: '10px', textAlign: 'center' }}>
-            Quick Demo Logins (Seed Roles):
+            Quick Demo Logins (2 Roles Only):
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
             <button
               type="button"
-              onClick={() => setPresetUser('admin', 'adminpassword123')}
+              onClick={() => setPresetUser('support', 'supportpassword123')}
               className="btn btn-secondary"
-              style={{ fontSize: '11px', padding: '6px 4px' }}
+              style={{ fontSize: '12px', padding: '8px 10px', textAlign: 'center' }}
             >
-              Admin
+              Support Engineer
             </button>
             <button
               type="button"
               onClick={() => setPresetUser('approver', 'approverpassword123')}
               className="btn btn-secondary"
-              style={{ fontSize: '11px', padding: '6px 4px' }}
+              style={{ fontSize: '12px', padding: '8px 10px', textAlign: 'center' }}
             >
-              Approver
-            </button>
-            <button
-              type="button"
-              onClick={() => setPresetUser('support', 'supportpassword123')}
-              className="btn btn-secondary"
-              style={{ fontSize: '11px', padding: '6px 4px' }}
-            >
-              Support
+              Senior Approver
             </button>
           </div>
         </div>

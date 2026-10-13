@@ -12,11 +12,7 @@ import {
   LogExplorer,
   Incidents,
   IncidentDetail,
-  Tickets,
   Approvals,
-  AuditLog,
-  Knowledge,
-  AdminSettings,
   Forbidden,
 } from './pages';
 
@@ -41,35 +37,24 @@ export const App: React.FC = () => {
           <main className="main-content">
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/upload" element={<UploadLogs />} />
+              <Route
+                path="/upload"
+                element={
+                  <ProtectedRoute userRole={user.role} allowedRoles={['support_engineer']}>
+                    <UploadLogs />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/logs" element={<LogExplorer />} />
               <Route path="/incidents" element={<Incidents />} />
               <Route path="/incidents/:id" element={<IncidentDetail />} />
-              <Route path="/tickets" element={<Tickets />} />
               
-              {/* Role Protected Routes */}
+              {/* Role Protected Approvals Route */}
               <Route
                 path="/approvals"
                 element={
-                  <ProtectedRoute userRole={user.role} allowedRoles={['approver', 'admin']}>
+                  <ProtectedRoute userRole={user.role} allowedRoles={['approver']}>
                     <Approvals />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/audit"
-                element={
-                  <ProtectedRoute userRole={user.role} allowedRoles={['approver', 'admin']}>
-                    <AuditLog />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/knowledge" element={<Knowledge />} />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute userRole={user.role} allowedRoles={['admin']}>
-                    <AdminSettings />
                   </ProtectedRoute>
                 }
               />

@@ -53,8 +53,7 @@ Write-Host " Access the Web App at: http://localhost:5173" -ForegroundColor Cyan
 Write-Host " API Documentation at:  http://localhost:8000/docs" -ForegroundColor Cyan
 Write-Host " Demo Service at:       http://localhost:8001/health" -ForegroundColor Cyan
 Write-Host "=====================================================" -ForegroundColor Green
-Write-Host "Default Login Accounts:" -ForegroundColor White
-Write-Host " - Admin:     admin / adminpassword123 (or admin123)" -ForegroundColor White
-Write-Host " - Approver:  approver / approverpassword123 (or approver123)" -ForegroundColor White
+Write-Host "Default Login Accounts (2 Roles):" -ForegroundColor White
 Write-Host " - Support:   support / supportpassword123 (or support123)" -ForegroundColor White
+Write-Host " - Approver:  approver / approverpassword123 (or approver123)" -ForegroundColor White
 Write-Host "=====================================================" -ForegroundColor Green

@@ -278,7 +278,7 @@ export const Tickets: React.FC = () => {
 
   // Allowed transitions for current user role and current status
   const getAllowedTransitions = (currStatus: TicketStatus): TicketStatus[] => {
-    if (userRole === 'admin' && showAdminOverride) {
+    if ((userRole as string) === 'admin' && showAdminOverride) {
       return ['open', 'in_progress', 'pending_approval', 'verifying', 'resolved', 'closed', 'escalated', 'reopened'].filter(
         st => st !== currStatus
       ) as TicketStatus[];
@@ -1034,7 +1034,7 @@ export const Tickets: React.FC = () => {
 
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {/* Approver Action: Direct Issue Resolution Bypass */}
-                  {(userRole === 'approver' || userRole === 'admin') &&
+                  {userRole === 'approver' &&
                     selectedTicket.status !== 'resolved' &&
                     selectedTicket.status !== 'closed' && (
                       <Link
@@ -1121,7 +1121,7 @@ export const Tickets: React.FC = () => {
                   Transition Ticket State
                 </span>
 
-                {userRole === 'admin' && (
+                {(userRole as string) === 'admin' && (
                   <label
                     style={{
                       display: 'flex',
